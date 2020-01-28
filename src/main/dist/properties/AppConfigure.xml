@@ -1,0 +1,8 @@
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <bean id="main" class="edu.mcw.rgd.Main">
+        <property name="version" value="Cellosaurus pipeline -- build Jan 28, 2020" />
+        <property name="sourcePipeline" value="CELLOSAURUS" />
+    </bean>
+</beans>
