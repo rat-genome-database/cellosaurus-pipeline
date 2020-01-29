@@ -6,7 +6,8 @@ public class DataRecord {
     private String symbol;
     private String name;
     private String cellLineType;
-    private String sex;
+    private String gender;
+
 
     public String getSymbol() {
         return symbol;
@@ -32,12 +33,12 @@ public class DataRecord {
         this.cellLineType = cellLineType;
     }
 
-    public String getSex() {
-        return sex;
+    public String getGender() {
+        return gender;
     }
 
-    public void setSex(String sex) {
-        this.sex = sex;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }
 

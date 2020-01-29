@@ -1,7 +1,10 @@
 package edu.mcw.rgd;
 
+import edu.mcw.rgd.datamodel.CellLine;
+import edu.mcw.rgd.datamodel.RgdId;
 import edu.mcw.rgd.process.FileDownloader;
 import edu.mcw.rgd.process.Utils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -48,20 +51,35 @@ public class Main {
         SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         log.info("   started at "+sdt.format(new Date(time0)));
 
-        List<DataRecord> incomingRecords = downloadAndParse();
-        log.info("INCOMING CELL LINES: "+incomingRecords.size());
-
-        log.info("OK -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
-    }
-
-    List<DataRecord> downloadAndParse() throws Exception {
-
         String localFile = downloadCellosaurusOboFile();
 
         List<DataRecord> dataRecords = getParser().parse(localFile);
 
+        // convert DataRecord objects into CellLine objects
+        List<CellLine> incomingRecords = new ArrayList<>(dataRecords.size());
+        for( DataRecord rec: dataRecords ) {
+            incomingRecords.add( qc(rec) );
+        }
+        log.info("CELL LINES INCOMING: "+incomingRecords.size());
 
-        return dataRecords;
+        // compare incoming CellLine objects against DB and load the changes
+        List<CellLine> inRgdRecords = dao.getCellLines(getSourcePipeline());
+
+        Collection<CellLine> toBeInserted = CollectionUtils.subtract(incomingRecords, inRgdRecords);
+        Collection<CellLine> toBeDeleted = CollectionUtils.subtract(inRgdRecords, incomingRecords);
+        Collection<CellLine> matching = CollectionUtils.intersection(inRgdRecords, incomingRecords);
+
+        log.info("CELL LINES MATCHING: "+matching.size());
+        if( toBeInserted.size()!=0 ) {
+            log.info("CELL LINES INSERTED: " + toBeInserted.size());
+            dao.insertCellLines(toBeInserted);
+        }
+        if( toBeDeleted.size()!=0 ) {
+            log.info("CELL LINES DELETED: " + toBeDeleted.size());
+            dao.deleteCellLines(toBeDeleted);
+        }
+
+        log.info("OK -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
     }
 
     String downloadCellosaurusOboFile() throws Exception {
@@ -71,6 +89,21 @@ public class Main {
         downloader.setUseCompression(true);
         downloader.setPrependDateStamp(true);
         return downloader.downloadNew();
+    }
+
+    CellLine qc( DataRecord rec ) throws Exception {
+
+        CellLine recIncoming = new CellLine();
+        recIncoming.setSrcPipeline(getSourcePipeline());
+        recIncoming.setSymbol(rec.getSymbol());
+        recIncoming.setName(rec.getName());
+        recIncoming.setGender(rec.getGender());
+        recIncoming.setObjectType(rec.getCellLineType());
+        recIncoming.setObjectKey(RgdId.OBJECT_KEY_CELL_LINES);
+        recIncoming.setObjectStatus("ACTIVE");
+        recIncoming.setSoAccId("CL:0000010");
+
+        return recIncoming;
     }
 
     public void setVersion(String version) {

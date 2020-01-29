@@ -3,7 +3,6 @@ package edu.mcw.rgd;
 import edu.mcw.rgd.process.Utils;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +39,11 @@ public class Parser {
                 continue;
             }
 
+            if( rec==null ) {
+                // skip header lines and trailer records (like [Typedef])
+                continue;
+            }
+
             // id: => CellLine symbol
             if( line.startsWith("id: ") ) {
                 rec.setSymbol( line.substring(4).trim() );
@@ -48,7 +52,7 @@ public class Parser {
             else if( line.startsWith("name: ") ) {
                 rec.setName( line.substring(6).trim() );
             }
-            // subset: CellLine Sex or Type
+            // subset: CellLine Gender or Type
             else if( line.startsWith("subset: ") ) {
                 parseSubset( line.substring(8).trim(), rec );
             }
@@ -58,7 +62,7 @@ public class Parser {
             }
             else {
                 if( rec!=null ) {
-                    throw new Exception("todo: implement parsing for line " + line);
+                    //throw new Exception("todo: implement parsing for line " + line);
                 }
             }
         }
@@ -76,7 +80,7 @@ public class Parser {
 
         for( String sexType: getSexTypes().keySet() ) {
             if( subset.equals(sexType) ) {
-                rec.setSex( getSexTypes().get(subset) );
+                rec.setGender( getSexTypes().get(subset) );
                 return;
             }
         }
@@ -88,12 +92,12 @@ public class Parser {
             }
         }
 
-        throw new Exception( "unexpected subset ["+subset+"]");
+        //throw new Exception( "unexpected subset ["+subset+"]");
     }
 
     void parseXref( String xref, DataRecord rec ) throws Exception {
 
-        throw new Exception( "unexpected xref ["+xref+"]");
+        //throw new Exception( "unexpected xref ["+xref+"]");
     }
 
     public void setSexTypes(Map sexTypes) {

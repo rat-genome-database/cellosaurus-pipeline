@@ -1,5 +1,6 @@
 Jan 29, 2020
   implemented parsing of Cell Line symbol, name, type and sex
+  implemented rudimentary qc and loading code for Cell Line objects
 
 Jan 28, 2020
   implemented rudimentary parsing of cellosaurus.obo file

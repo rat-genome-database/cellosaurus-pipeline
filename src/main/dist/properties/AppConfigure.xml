@@ -11,11 +11,11 @@
     <bean id="parser" class="edu.mcw.rgd.Parser">
         <property name="sexTypes">
             <map>
-                <entry key="Female" value="female"/>
-                <entry key="Male" value="male"/>
-                <entry key="Mixed_sex" value="mixed sex"/>
-                <entry key="Sex_ambiguous" value="ambiguous"/>
-                <entry key="Sex_unspecified" value="unspecified"/>
+                <entry key="Female" value="Female"/>
+                <entry key="Male" value="Male"/>
+                <entry key="Mixed_sex" value="Mixed"/>
+                <entry key="Sex_ambiguous" value="Ambiguous"/>
+                <entry key="Sex_unspecified" value="Unspecified"/>
             </map>
         </property>
         <property name="cellLineTypes">
