@@ -4,5 +4,39 @@
     <bean id="main" class="edu.mcw.rgd.Main">
         <property name="version" value="Cellosaurus pipeline -- build Jan 28, 2020" />
         <property name="sourcePipeline" value="CELLOSAURUS" />
+        <property name="oboFile" value="ftp://ftp.expasy.org/databases/cellosaurus/cellosaurus.obo"/>
+        <property name="parser" ref="parser"/>
+    </bean>
+
+    <bean id="parser" class="edu.mcw.rgd.Parser">
+        <property name="sexTypes">
+            <map>
+                <entry key="Female" value="female"/>
+                <entry key="Male" value="male"/>
+                <entry key="Mixed_sex" value="mixed sex"/>
+                <entry key="Sex_ambiguous" value="ambiguous"/>
+                <entry key="Sex_unspecified" value="unspecified"/>
+            </map>
+        </property>
+        <property name="cellLineTypes">
+            <map>
+                <entry key="Cancer_cell_line" value="cancer cell line"/>
+                <entry key="Conditionally_immortalized_cell_line" value="conditionally immortalized cell line"/>
+                <entry key="Embryonic_stem_cell" value="embryonic stem cell"/>
+                <entry key="Factor-dependent_cell_line" value="factor-dependent cell line"/>
+                <entry key="Finite_cell_line" value="finite cell line"/>
+                <entry key="Hybrid_cell_line" value="hybrid cell line"/>
+                <entry key="Hybridoma" value="hybridoma"/>
+                <entry key="Induced_pluripotent_stem_cell" value="induced pluripotent stem cell"/>
+                <entry key="Somatic_stem_cell" value="somatic stem cell"/>
+                <entry key="Spontaneously_immortalized_cell_line" value="spontaneously immortalized cell line"/>
+                <entry key="Stromal_cell_line" value="stromal cell line"/>
+                <entry key="Telomerase_immortalized_cell_line" value="telomerase immortalized cell line"/>
+                <entry key="Transformed_cell_line" value="transformed cell line"/>
+                <entry key="Undefined_cell_line_type" value="undefined cell line type"/>
+            </map>
+        </property>
     </bean>
 </beans>
+
+
