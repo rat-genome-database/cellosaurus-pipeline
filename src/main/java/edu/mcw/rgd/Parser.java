@@ -16,7 +16,8 @@ public class Parser {
     private Map<String,String> sexTypes;
     private Map<String,String> cellLineTypes;
 
-    public List<DataRecord> parse(String fileName) throws IOException {
+    public List<DataRecord> parse(String fileName) throws Exception {
+
         List<DataRecord> dataRecords = new ArrayList<DataRecord>();
 
         BufferedReader in = Utils.openReader(fileName);
@@ -25,16 +26,41 @@ public class Parser {
         while( (line=in.readLine())!=null ) {
 
             // detect record boundaries
-            if( line.equals("[Term]") ) {
+            if( line.startsWith("[") && line.endsWith("]") ) {
                 // save the previous record
                 if( rec!=null ) {
                     dataRecords.add(rec);
                 }
-                rec = null;
+                if( line.equals("[Term]") ) {
+                    rec = new DataRecord();
+                } else {
+                    // non-Term entries, f.e. [Typedef]: ignore
+                    rec = null;
+                }
                 continue;
             }
 
-
+            // id: => CellLine symbol
+            if( line.startsWith("id: ") ) {
+                rec.setSymbol( line.substring(4).trim() );
+            }
+            // name: CellLine name
+            else if( line.startsWith("name: ") ) {
+                rec.setName( line.substring(6).trim() );
+            }
+            // subset: CellLine Sex or Type
+            else if( line.startsWith("subset: ") ) {
+                parseSubset( line.substring(8).trim(), rec );
+            }
+            // xref:
+            else if( line.startsWith("xref: ") ) {
+                parseXref( line.substring(6).trim(), rec );
+            }
+            else {
+                if( rec!=null ) {
+                    throw new Exception("todo: implement parsing for line " + line);
+                }
+            }
         }
         in.close();
 
@@ -43,6 +69,31 @@ public class Parser {
             dataRecords.add(rec);
         }
         return dataRecords;
+    }
+
+    /// a subset could be either a sex type, or a cell line type
+    void parseSubset( String subset, DataRecord rec ) throws Exception {
+
+        for( String sexType: getSexTypes().keySet() ) {
+            if( subset.equals(sexType) ) {
+                rec.setSex( getSexTypes().get(subset) );
+                return;
+            }
+        }
+
+        for( String cellLineType: getCellLineTypes().keySet() ) {
+            if( subset.equals(cellLineType) ) {
+                rec.setCellLineType( getCellLineTypes().get(subset) );
+                return;
+            }
+        }
+
+        throw new Exception( "unexpected subset ["+subset+"]");
+    }
+
+    void parseXref( String xref, DataRecord rec ) throws Exception {
+
+        throw new Exception( "unexpected xref ["+xref+"]");
     }
 
     public void setSexTypes(Map sexTypes) {
