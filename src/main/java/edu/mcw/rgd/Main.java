@@ -1,7 +1,7 @@
 package edu.mcw.rgd;
 
 import edu.mcw.rgd.datamodel.CellLine;
-import edu.mcw.rgd.datamodel.RgdId;
+import edu.mcw.rgd.process.CounterPool;
 import edu.mcw.rgd.process.FileDownloader;
 import edu.mcw.rgd.process.Utils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -53,13 +53,11 @@ public class Main {
 
         String localFile = downloadCellosaurusOboFile();
 
-        List<DataRecord> dataRecords = getParser().parse(localFile);
+        CounterPool counters = new CounterPool();
+
+        List<DataRecord> incomingRecords = getParser().parse(localFile, counters, getSourcePipeline());
 
         // convert DataRecord objects into CellLine objects
-        List<CellLine> incomingRecords = new ArrayList<>(dataRecords.size());
-        for( DataRecord rec: dataRecords ) {
-            incomingRecords.add( qc(rec) );
-        }
         log.info("CELL LINES INCOMING: "+incomingRecords.size());
 
         // compare incoming CellLine objects against DB and load the changes
@@ -79,7 +77,15 @@ public class Main {
             dao.deleteCellLines(toBeDeleted);
         }
 
+        qcAliases();
+
+        log.warn("TODO QC XDB IDS");
+
         log.info("OK -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
+    }
+
+    void qcAliases() throws Exception {
+        throw new Exception("TODO qc aliases");
     }
 
     String downloadCellosaurusOboFile() throws Exception {
@@ -89,21 +95,6 @@ public class Main {
         downloader.setUseCompression(true);
         downloader.setPrependDateStamp(true);
         return downloader.downloadNew();
-    }
-
-    CellLine qc( DataRecord rec ) throws Exception {
-
-        CellLine recIncoming = new CellLine();
-        recIncoming.setSrcPipeline(getSourcePipeline());
-        recIncoming.setSymbol(rec.getSymbol());
-        recIncoming.setName(rec.getName());
-        recIncoming.setGender(rec.getGender());
-        recIncoming.setObjectType(rec.getCellLineType());
-        recIncoming.setObjectKey(RgdId.OBJECT_KEY_CELL_LINES);
-        recIncoming.setObjectStatus("ACTIVE");
-        recIncoming.setSoAccId("CL:0000010");
-
-        return recIncoming;
     }
 
     public void setVersion(String version) {

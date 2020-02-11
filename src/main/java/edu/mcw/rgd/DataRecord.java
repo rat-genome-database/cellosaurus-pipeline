@@ -1,44 +1,29 @@
 package edu.mcw.rgd;
 
+import edu.mcw.rgd.datamodel.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /// represents data parsed from cellosaurus obo file for one cell line object
-public class DataRecord {
+public class DataRecord extends CellLine {
 
-    private String symbol;
-    private String name;
-    private String cellLineType;
-    private String gender;
+    private List<Alias> aliases = new ArrayList<>();
+    private List<XdbId> xdbIds = new ArrayList<>();
 
-
-    public String getSymbol() {
-        return symbol;
+    public DataRecord() {
+        setObjectKey(RgdId.OBJECT_KEY_CELL_LINES);
+        setObjectStatus("ACTIVE");
+        setSoAccId("CL:0000010");
+        setSpeciesTypeKey(SpeciesType.UNKNOWN);
     }
 
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
+    public List<Alias> getAliases() {
+        return aliases;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCellLineType() {
-        return cellLineType;
-    }
-
-    public void setCellLineType(String cellLineType) {
-        this.cellLineType = cellLineType;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
+    public List<XdbId> getXdbIds() {
+        return xdbIds;
     }
 }
 

@@ -36,6 +36,20 @@
                 <entry key="Undefined_cell_line_type" value="undefined cell line type"/>
             </map>
         </property>
+        <property name="ignoredXrefDatabases">
+            <set>
+                <value>dbMHC</value>
+                <value>http</value>
+            </set>
+        </property>
+        <property name="processedXrefDatabases">
+            <map>
+                <entry key="ECACC" value="69"/>
+                <entry key="IHW" value="70"/>
+                <entry key="IPD-IMGT/HLA" value="71"/>
+                <entry key="Wikidata" value="72"/>
+            </map>
+        </property>
     </bean>
 </beans>
 
