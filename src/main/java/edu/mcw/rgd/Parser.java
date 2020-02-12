@@ -1,6 +1,7 @@
 package edu.mcw.rgd;
 
 import edu.mcw.rgd.datamodel.Alias;
+import edu.mcw.rgd.datamodel.Association;
 import edu.mcw.rgd.datamodel.SpeciesType;
 import edu.mcw.rgd.datamodel.XdbId;
 import edu.mcw.rgd.process.CounterPool;
@@ -91,6 +92,10 @@ public class Parser {
             else if( line.startsWith("creation_date: ") ) {
                 counters.increment("PARSER ignored field 'creation_date'");
             }
+            // relationship:
+            else if( line.startsWith("relationship: ") ) {
+                parseRelationship( line.substring(14).trim(), rec );
+            }
             else {
                 if( rec!=null ) {
                     throw new Exception("todo: implement parsing for line " + line);
@@ -152,7 +157,12 @@ public class Parser {
 
         String[] pair = xref.split("[:]");
         if( pair.length!=2 ) {
-            throw new Exception( "unexpected xref ["+xref+"]");
+            // fixup for BTO:  'BTO:BTO:0006002' => 'BTO:BTO_0006002'
+            if( pair.length==3 && pair[0].equals("BTO") && pair[1].equals("BTO") ) {
+                pair[1] = "BTO_"+pair[2];
+            } else {
+                throw new Exception("unexpected xref [" + xref + "]");
+            }
         }
         String xrefDb = pair[0];
         String xrefAcc = pair[1];
@@ -177,7 +187,7 @@ public class Parser {
         }
         Integer xdbKey = getProcessedXrefDatabases().get(xrefDb);
         if( xdbKey==null ) {
-            throw new Exception("unexpected xref db [" + xrefDb + "]");
+            throw new Exception("unexpected xref db [" + xrefDb + "]  acc ["+xrefAcc+"]");
         }
 
         XdbId xdbId = new XdbId();
@@ -189,30 +199,114 @@ public class Parser {
 
 
     void parseComment( String comment, DataRecord rec ) throws Exception {
+
+        List<String> pairs = splitCommentIntoPairs(comment);
+        for( String pair: pairs ) {
+
+            if( pair.startsWith("Group: ")
+             || pair.startsWith("Part of: ")
+             || pair.startsWith("Registration: ") ) {
+                // CELL_LINES.GROUPS
+                rec.setGroups(merge(rec.getGroups(), pair));
+            }
+            else if( pair.startsWith("Characteristics: ")
+                  || pair.startsWith("Monoclonal antibody isotype: ")
+                  || pair.startsWith("Monoclonal antibody target: ") ) {
+                // CELL_LINES.CHARACTERISTICS
+                rec.setCharacteristics(merge(rec.getCharacteristics(), pair));
+            }
+            else if( pair.startsWith("Breed/subspecies: ")
+                  || pair.startsWith("Derived from metastatic site: ")
+                  || pair.startsWith("Population: ")
+                  || pair.startsWith("Transformant: ") ) {
+                // CELL_LINES.ORIGIN
+                rec.setOrigin(merge(rec.getOrigin(), pair));
+            }
+            else if( pair.startsWith("Discontinued: ") ) {
+                // CELL_LINES.AVAILABILITY
+                rec.setAvailability(merge(rec.getAvailability(), pair));
+            }
+            else if( pair.startsWith("Doubling time: ") ) {
+                // CELL_LINES.PHENOTYPE
+                rec.setPhenotype(merge(rec.getPhenotype(), pair));
+            }
+            else if( pair.startsWith("Omics: ") ) {
+                // CELL_LINES.RESEARCH_USE
+                rec.setResearchUse(merge(rec.getResearchUse(), pair));
+            }
+            else if( pair.startsWith("Problematic cell line: ") ) {
+                // CELL_LINES.CAUTION
+                rec.setCaution(merge(rec.getCaution(), pair));
+            }
+            else if( pair.startsWith("HLA typing: ") ) {
+                // GENOMIC_ELEMENTS.DESCRIPTION
+                rec.setDescription(merge(rec.getDescription(), pair));
+            }
+            else if( pair.startsWith("Sequence variation: ")
+                  || pair.startsWith("Knockout cell: ")
+                  || pair.startsWith("Transfected with: ") ) {
+                // GENOMIC_ELEMENTS.GENOMIC_ALTERATION
+                rec.setGenomicAlteration(merge(rec.getGenomicAlteration(), pair));
+
+                if( pair.startsWith("Transfected with: ") ) {
+                    String oldValue = rec.getGeneAssocs().put(pair.substring(18), "transfected_with");
+                    if( oldValue!=null ) {
+                        throw new Exception("unexpected transfected with");
+                    }
+                }
+
+                if( pair.startsWith("Knockout cell: ") ) {
+                    String oldValue = rec.getGeneAssocs().put(pair.substring(15), "knockout_cell");
+                    if( oldValue!=null ) {
+                        throw new Exception("unexpected knockout cell");
+                    }
+                }
+            }
+            else {
+                throw new Exception("comment parse error: unknown tag: "+pair);
+            }
+        }
+    }
+
+    List<String> splitCommentIntoPairs(String comment) {
         // get rid of surrounding double quotes
         if( comment.startsWith("\"") && comment.endsWith("\"") ) {
             comment = comment.substring(1, comment.length()-1);
         }
 
         String[] pairs = comment.split("\\. ");
-        for( int i=0; i<pairs.length; i++ ) {
-            String pair = pairs[i];
-            if( pair.startsWith("Part of: ") ) {
-                // CELL_LINES.GROUPS
-                rec.setGroups(merge(rec.getGroups(), pair));
-            }
-            else if( pair.startsWith("HLA typing: ") ) {
-                // GENOMIC_ELEMENTS.DESCRIPTION
-                rec.setDescription(merge(rec.getDescription(), pair));
-            }
-            else if( pair.startsWith("Transformant: ") ) {
-                // CELL_LINES.ORIGIN
-                rec.setOrigin(merge(rec.getOrigin(), pair));
-            }
-            else {
-                throw new Exception("comment parse error: unknown tag: "+pair);
+        List<String> result = new ArrayList<>();
+        for( String pair: pairs ) {
+            if( pair.contains(": ") ) {
+                result.add(pair);
+            } else {
+                // not a pair: append this string to the last pair
+                int index = result.size()-1;
+                result.set(index, result.get(index)+" "+pair+".");
             }
         }
+        return result;
+    }
+
+    void parseRelationship(String info, DataRecord rec) throws Exception {
+
+        // parse 'derived_from'
+        // f.e. derived_from CVCL_4032 ! P3X63Ag8.653
+        if( info.startsWith("derived_from ") ) {
+            int symbolEnd = info.indexOf(" ! ");
+            String cellLineSymbol = info.substring(13, symbolEnd);
+            rec.getCellLineAssocs().put(cellLineSymbol, "derived_from");
+            return;
+        }
+
+        if( info.startsWith("originate_from_same_individual_as ") ) {
+            int symbolEnd = info.indexOf(" ! ");
+            String cellLineSymbol = info.substring(34, symbolEnd);
+            rec.getCellLineAssocs().put(cellLineSymbol, "originate_from_same_individual_as");
+            return;
+        }
+
+        throw new Exception("unexpected relationship: "+info);
     }
 
     String merge(String s1, String s2) {

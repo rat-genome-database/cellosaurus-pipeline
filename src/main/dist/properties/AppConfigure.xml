@@ -38,16 +38,42 @@
         </property>
         <property name="ignoredXrefDatabases">
             <set>
-                <value>dbMHC</value>
                 <value>http</value>
+
+                <value>CLDB</value>
+                <value>dbMHC</value>
+                <value>IARC_TP53</value>
+                <value>IZSLER</value>
+                <value>TKG</value>
             </set>
         </property>
         <property name="processedXrefDatabases">
             <map>
+                <entry key="PubMed" value="2"/>
                 <entry key="ECACC" value="69"/>
                 <entry key="IHW" value="70"/>
                 <entry key="IPD-IMGT/HLA" value="71"/>
                 <entry key="Wikidata" value="72"/>
+                <entry key="RCB" value="73"/>
+                <entry key="NCIt" value="74"/>
+                <entry key="CLO" value="75"/>
+                <entry key="ATCC" value="76"/>
+                <entry key="CelloPub" value="77"/>
+                <entry key="DOI" value="78"/>
+                <entry key="SKIP" value="79"/>
+                <entry key="CCRID" value="80"/>
+                <entry key="BTO" value="81"/>
+                <entry key="ArrayExpress" value="82"/>
+                <entry key="Ximbio" value="83"/>
+                <entry key="JCRB" value="84"/>
+                <entry key="BioSample" value="85"/>
+                <entry key="KCLB" value="86"/>
+                <entry key="ChEMBL-Cells" value="87"/>
+                <entry key="ChEMBL-Targets" value="88"/>
+                <entry key="Cosmic" value="89"/>
+                <entry key="Coriell" value="90"/>
+                <entry key="ABCD" value="91"/>
+                <entry key="GEO" value="92"/>
             </map>
         </property>
     </bean>

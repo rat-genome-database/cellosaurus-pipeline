@@ -77,15 +77,23 @@ public class Main {
             dao.deleteCellLines(toBeDeleted);
         }
 
-        qcAliases();
-
-        log.warn("TODO QC XDB IDS");
+        qcAndLoadAliases();
+        qcAndLoadAssociations();
+        qcAndLoadXdbIds();
 
         log.info("OK -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
     }
 
-    void qcAliases() throws Exception {
+    void qcAndLoadAliases() throws Exception {
         throw new Exception("TODO qc aliases");
+    }
+
+    void qcAndLoadAssociations() throws Exception {
+        throw new Exception("TODO qc associations");
+    }
+
+    void qcAndLoadXdbIds() throws Exception {
+        throw new Exception("TODO qc xdb ids");
     }
 
     String downloadCellosaurusOboFile() throws Exception {
