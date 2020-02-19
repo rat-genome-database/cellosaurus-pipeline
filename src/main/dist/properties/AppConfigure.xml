@@ -39,12 +39,27 @@
         <property name="ignoredXrefDatabases">
             <set>
                 <value>http</value>
+                <value>https</value>
 
+                <value>AddexBio</value>
+                <value>BEI_Resources</value>
+                <value>CCLE</value>
+                <value>CCTCC</value>
+                <value>CGH-DB</value>
                 <value>CLDB</value>
                 <value>dbMHC</value>
+                <value>FCS-free</value>
+                <value>FlyBase</value>
                 <value>IARC_TP53</value>
+                <value>ISCR</value>
                 <value>IZSLER</value>
+                <value>KCB</value>
+                <value>MCCL</value>
+                <value>NCBI_Iran</value>
+                <value>NIH-ARP</value>
+                <value>SKY/M-FISH/CGH</value>
                 <value>TKG</value>
+                <value>TOKU-E</value>
             </set>
         </property>
         <property name="processedXrefDatabases">
@@ -74,6 +89,21 @@
                 <entry key="Coriell" value="90"/>
                 <entry key="ABCD" value="91"/>
                 <entry key="GEO" value="92"/>
+                <entry key="EFO" value="93"/>
+                <entry key="PharmacoDB" value="94"/>
+                <entry key="Lonza" value="95"/>
+                <entry key="BCRC" value="96"/>
+                <entry key="ESTDAB" value="97"/>
+                <entry key="DGRC" value="98"/>
+                <entry key="ENCODE" value="99"/>
+                <entry key="eagle-i" value="100"/>
+                <entry key="BCRJ" value="101"/>
+                <entry key="Cell_Model_Passport" value="102"/>
+                <entry key="LINCS_LDP" value="103"/>
+                <entry key="PRIDE" value="104"/>
+                <entry key="DepMap" value="105"/>
+                <entry key="ICLC" value="106"/>
+                <entry key="DiscoverX" value="107"/>
             </map>
         </property>
     </bean>

@@ -159,7 +159,21 @@ public class Parser {
         if( pair.length!=2 ) {
             // fixup for BTO:  'BTO:BTO:0006002' => 'BTO:BTO_0006002'
             if( pair.length==3 && pair[0].equals("BTO") && pair[1].equals("BTO") ) {
-                pair[1] = "BTO_"+pair[2];
+                pair[1] = "BTO_" + pair[2];
+
+            } else if( pair.length==3 && pair[0].equals("MCCL") && pair[1].equals("MCC")) {
+                // fixup for MCCL:  'MCCL:MCC:0000361'
+                pair[1] += ":" + pair[2];
+
+            } else if( pair.length==3 && pair[0].equals("DOI") ) {
+                // fixup for DOI:xxx with ':' in the doid id
+                pair[1] += ":" + pair[2];
+
+                // fixup for malformed http
+            } else if( pair.length>2 && pair[0].startsWith("http") ) {
+                for (int i = 2; i < pair.length; i++) {
+                    pair[1] += pair[i];
+                }
             } else {
                 throw new Exception("unexpected xref [" + xref + "]");
             }
@@ -217,7 +231,9 @@ public class Parser {
             }
             else if( pair.startsWith("Breed/subspecies: ")
                   || pair.startsWith("Derived from metastatic site: ")
+                  || pair.startsWith("Derived from sampling site: ")
                   || pair.startsWith("Population: ")
+                  || pair.startsWith("Selected for resistance to: ")
                   || pair.startsWith("Transformant: ") ) {
                 // CELL_LINES.ORIGIN
                 rec.setOrigin(merge(rec.getOrigin(), pair));
@@ -234,13 +250,24 @@ public class Parser {
                 // CELL_LINES.RESEARCH_USE
                 rec.setResearchUse(merge(rec.getResearchUse(), pair));
             }
-            else if( pair.startsWith("Problematic cell line: ") ) {
+            else if( pair.startsWith("Caution: ")
+                  || pair.startsWith("Problematic cell line: ")
+                  || pair.startsWith("The major changes were: ") ) { // this is a fake pair that is in fact a part of 'Caution:' tag
                 // CELL_LINES.CAUTION
                 rec.setCaution(merge(rec.getCaution(), pair));
             }
-            else if( pair.startsWith("HLA typing: ") ) {
+            else if( pair.startsWith("Genome ancestry: ")
+                  || pair.startsWith("HLA typing: ") ) {
                 // GENOMIC_ELEMENTS.DESCRIPTION
                 rec.setDescription(merge(rec.getDescription(), pair));
+            }
+            else if( pair.startsWith("From: ") ) {
+                // GENOMIC_ELEMENTS.SOURCE
+                rec.setSource(merge(rec.getSource(), pair));
+            }
+            else if( pair.startsWith("Miscellaneous: ") ) {
+                // GENOMIC_ELEMENTS.NOTES
+                rec.setNotes(merge(rec.getNotes(), pair));
             }
             else if( pair.startsWith("Sequence variation: ")
                   || pair.startsWith("Knockout cell: ")
