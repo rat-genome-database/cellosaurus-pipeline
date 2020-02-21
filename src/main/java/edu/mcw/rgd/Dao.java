@@ -38,7 +38,7 @@ public class Dao {
 
             cellLineDAO.insertCellLine(cl);
 
-            log.debug(cl);
+            log.debug(cl.dump("|"));
         }
     }
 

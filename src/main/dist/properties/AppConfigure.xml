@@ -44,27 +44,42 @@
                 <value>AddexBio</value>
                 <value>BEI_Resources</value>
                 <value>CCLE</value>
+                <value>CCLV</value>
                 <value>CCTCC</value>
+                <value>Cell_Biolabs</value>
                 <value>CGH-DB</value>
                 <value>CLDB</value>
+                <value>CLS</value>
+                <value>ColonAtlas</value>
                 <value>dbMHC</value>
+                <value>FCDI</value>
                 <value>FCS-free</value>
                 <value>FlyBase</value>
                 <value>IARC_TP53</value>
+                <value>IBRC</value>
+                <value>Imanis</value>
                 <value>ISCR</value>
                 <value>IZSLER</value>
                 <value>KCB</value>
+                <value>KYinno</value>
                 <value>MCCL</value>
+                <value>Millipore</value>
                 <value>NCBI_Iran</value>
+                <value>NCI-DTP</value>
+                <value>NHCDR</value>
                 <value>NIH-ARP</value>
+                <value>NISES</value>
+                <value>RSCB</value>
                 <value>SKY/M-FISH/CGH</value>
                 <value>TKG</value>
                 <value>TOKU-E</value>
+                <value>WiCell</value>
             </set>
         </property>
         <property name="processedXrefDatabases">
             <map>
                 <entry key="PubMed" value="2"/>
+                <entry key="MeSH" value="47"/>
                 <entry key="ECACC" value="69"/>
                 <entry key="IHW" value="70"/>
                 <entry key="IPD-IMGT/HLA" value="71"/>
@@ -104,6 +119,25 @@
                 <entry key="DepMap" value="105"/>
                 <entry key="ICLC" value="106"/>
                 <entry key="DiscoverX" value="107"/>
+                <entry key="DSMZ" value="108"/>
+                <entry key="LINCS_HMS" value="109"/>
+                <entry key="BioSamples" value="110"/>
+                <entry key="hPSCreg" value="111"/>
+                <entry key="IGRhCellID" value="112"/>
+                <entry key="MMRRC" value="113"/>
+                <entry key="Cosmic-CLP" value="114"/>
+                <entry key="GDSC" value="115"/>
+                <entry key="LiGeA" value="116"/>
+                <entry key="MetaboLights" value="117"/>
+                <entry key="4DN" value="118"/>
+                <entry key="TNGB" value="119"/>
+                <entry key="ABM" value="120"/>
+                <entry key="TCB" value="121"/>
+                <entry key="CBA" value="122"/>
+                <entry key="EBiSC" value="123"/>
+                <entry key="BCGO" value="124"/>
+                <entry key="IGSR" value="125"/>
+                <entry key="HipSci" value="126"/>
             </map>
         </property>
     </bean>

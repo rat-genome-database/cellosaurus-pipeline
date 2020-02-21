@@ -44,7 +44,7 @@ public class Parser {
                 // save the previous record
                 if( rec!=null ) {
                     dataRecords.add(rec);
-                    System.out.println("#REC "+dataRecords.size());
+                    //System.out.println("#REC "+dataRecords.size());
                 }
                 if( line.equals("[Term]") ) {
                     rec = new DataRecord();
@@ -107,7 +107,7 @@ public class Parser {
         // add final data record to the list
         if( rec!=null ) {
             dataRecords.add(rec);
-            System.out.println("#REC "+dataRecords.size());
+            //System.out.println("#REC "+dataRecords.size());
         }
         return dataRecords;
     }
@@ -165,9 +165,18 @@ public class Parser {
                 // fixup for MCCL:  'MCCL:MCC:0000361'
                 pair[1] += ":" + pair[2];
 
+            } else if( pair.length==3 && pair[0].equals("CLS") ) {
+                pair[1] += ":" + pair[2];
+
+            } else if( pair.length==3 && pair[0].equals("MMRRC") ) {
+                pair[1] += ":" + pair[2];
+
             } else if( pair.length==3 && pair[0].equals("DOI") ) {
                 // fixup for DOI:xxx with ':' in the doid id
                 pair[1] += ":" + pair[2];
+
+            } else if( pair.length==5 && pair[0].equals("DOI") ) {
+                pair[1] += ":" + pair[2] + ":" + pair[3]+ ":" + pair[4];
 
                 // fixup for malformed http
             } else if( pair.length>2 && pair[0].startsWith("http") ) {
@@ -224,6 +233,7 @@ public class Parser {
                 rec.setGroups(merge(rec.getGroups(), pair));
             }
             else if( pair.startsWith("Characteristics: ")
+                  || pair.startsWith("Contains 11 integrated HTLV-1 proviruses: ")
                   || pair.startsWith("Monoclonal antibody isotype: ")
                   || pair.startsWith("Monoclonal antibody target: ") ) {
                 // CELL_LINES.CHARACTERISTICS
@@ -242,16 +252,22 @@ public class Parser {
                 // CELL_LINES.AVAILABILITY
                 rec.setAvailability(merge(rec.getAvailability(), pair));
             }
-            else if( pair.startsWith("Doubling time: ") ) {
+            else if( pair.startsWith("Doubling time: ")
+                  || pair.startsWith("Microsatellite instability: ") ) {
                 // CELL_LINES.PHENOTYPE
                 rec.setPhenotype(merge(rec.getPhenotype(), pair));
             }
-            else if( pair.startsWith("Omics: ") ) {
+            else if( pair.startsWith("Omics: ")
+                  || pair.startsWith("Biotechnology: ") ) {
                 // CELL_LINES.RESEARCH_USE
                 rec.setResearchUse(merge(rec.getResearchUse(), pair));
             }
             else if( pair.startsWith("Caution: ")
+                  || pair.startsWith("Misspelling: ")
                   || pair.startsWith("Problematic cell line: ")
+                  || pair.startsWith("Shown to be a HeLa derivative (PubMed=1246601; PubMed=6451928: ") // fake
+                  || pair.startsWith("Compared to the STR values obtained by other distributors it differed from having: ") // fake
+                  || pair.startsWith("Lacks the expression of three protein markers: ") // fake
                   || pair.startsWith("The major changes were: ") ) { // this is a fake pair that is in fact a part of 'Caution:' tag
                 // CELL_LINES.CAUTION
                 rec.setCaution(merge(rec.getCaution(), pair));
@@ -265,7 +281,8 @@ public class Parser {
                 // GENOMIC_ELEMENTS.SOURCE
                 rec.setSource(merge(rec.getSource(), pair));
             }
-            else if( pair.startsWith("Miscellaneous: ") ) {
+            else if( pair.startsWith("Anecdotal: ")
+                  || pair.startsWith("Miscellaneous: ") ) {
                 // GENOMIC_ELEMENTS.NOTES
                 rec.setNotes(merge(rec.getNotes(), pair));
             }
