@@ -1,3 +1,7 @@
+Feb 21, 2020
+  finished parsing code
+  implemented cell lines qc: insertions and deletions
+
 Jan 29, 2020
   implemented parsing of Cell Line symbol, name, type and sex
   implemented rudimentary qc and loading code for Cell Line objects

@@ -57,31 +57,65 @@ public class Main {
 
         List<DataRecord> incomingRecords = getParser().parse(localFile, counters, getSourcePipeline());
 
-        // convert DataRecord objects into CellLine objects
-        log.info("CELL LINES INCOMING: "+incomingRecords.size());
-
         // compare incoming CellLine objects against DB and load the changes
         List<CellLine> inRgdRecords = dao.getCellLines(getSourcePipeline());
 
-        Collection<CellLine> toBeInserted = CollectionUtils.subtract(incomingRecords, inRgdRecords);
-        Collection<CellLine> toBeDeleted = CollectionUtils.subtract(inRgdRecords, incomingRecords);
-        Collection<CellLine> matching = CollectionUtils.intersection(inRgdRecords, incomingRecords);
-
-        log.info("CELL LINES MATCHING: "+matching.size());
-        if( toBeInserted.size()!=0 ) {
-            log.info("CELL LINES INSERTED: " + toBeInserted.size());
-            dao.insertCellLines(toBeInserted);
-        }
-        if( toBeDeleted.size()!=0 ) {
-            log.info("CELL LINES DELETED: " + toBeDeleted.size());
-            dao.deleteCellLines(toBeDeleted);
-        }
+        insertDeleteCellLines(incomingRecords, inRgdRecords);
 
         qcAndLoadAliases();
         qcAndLoadAssociations();
         qcAndLoadXdbIds();
 
         log.info("OK -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
+    }
+
+    void insertDeleteCellLines(List<DataRecord> incomingRecords, List<CellLine> inRgdRecords) throws Exception {
+
+        // determine to-be-inserted/deleted cell lines by looking at the symbol
+        log.info("CELL LINES INCOMING: "+incomingRecords.size());
+
+        Map<String, DataRecord> incoming = new HashMap<>();
+        for( DataRecord rec: incomingRecords ) {
+            incoming.put(rec.getSymbol(), rec);
+        }
+        if( incoming.size()!=incomingRecords.size() ) {
+            throw new Exception("duplicate symbol for incoming");
+        }
+
+        Map<String, CellLine> inRgd = new HashMap<>();
+        for( CellLine cl: inRgdRecords ) {
+            inRgd.put(cl.getSymbol(), cl);
+        }
+        if( inRgd.size()!=inRgdRecords.size() ) {
+            throw new Exception("duplicate symbol for in-rgd");
+        }
+
+        Collection<String> toBeInserted = CollectionUtils.subtract(incoming.keySet(), inRgd.keySet());
+        Collection<String> toBeDeleted = CollectionUtils.subtract(inRgd.keySet(), incoming.keySet());
+        //Collection<CellLine> matching = CollectionUtils.intersection(inRgdRecords, incomingRecords);
+
+        //log.info("CELL LINES MATCHING: "+matching.size());
+        if( toBeInserted.size()!=0 ) {
+            List<CellLine> toBeInsertedCellLines = new ArrayList<>();
+            for( String symbol: toBeInserted ) {
+                toBeInsertedCellLines.add(incoming.get(symbol));
+            }
+            dao.insertCellLines(toBeInsertedCellLines);
+
+            log.info("CELL LINES INSERTED: " + toBeInsertedCellLines.size());
+        }
+
+        if( toBeDeleted.size()!=0 ) {
+            List<CellLine> toBeDeletedCellLines = new ArrayList<>();
+            for( String symbol: toBeDeleted ) {
+                toBeDeletedCellLines.add(inRgd.get(symbol));
+            }
+            dao.deleteCellLines(toBeDeletedCellLines);
+
+            log.info("CELL LINES DELETED: " + toBeDeletedCellLines.size());
+        }
+
+        throw new Exception("TODO: update matching cell lines");
     }
 
     void qcAndLoadAliases() throws Exception {
