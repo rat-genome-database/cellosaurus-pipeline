@@ -1,7 +1,6 @@
 package edu.mcw.rgd;
 
 import edu.mcw.rgd.datamodel.Alias;
-import edu.mcw.rgd.process.Utils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 
@@ -46,41 +45,23 @@ public class AliasCollection {
     /// we load only new aliases; old aliases are never deleted -- that's our policy
     synchronized public void qc(Dao dao) throws Exception {
 
-        throw new Exception("TODO:");
-        /*
-        // note: for better performance, only some fields are loaded: rgd-id, seq-type and seq-md5
-        List<Sequence> inRgdSeqs = dao.getPromoterSequences();
+        List<Alias> aliasesInRgd = dao.getAliases();
 
-        // determine new sequences for insertion
-        Collection<Sequence> forInsert = CollectionUtils.subtract(incoming, inRgdSeqs);
+        // determine new aliases for insertion
+        Collection<Alias> forInsert = CollectionUtils.subtract(incoming, aliasesInRgd);
 
-        // determine new sequences for deletion
-        Collection<Sequence> forDelete = CollectionUtils.subtract(inRgdSeqs, incoming);
+        Collection<Alias> matching = CollectionUtils.intersection(incoming, aliasesInRgd);
 
-        Collection<Sequence> matching = CollectionUtils.intersection(inRgdSeqs, incoming);
-
-
-        // insert new sequences
+        // insert new aliases
         if( !forInsert.isEmpty() ) {
-            for( Sequence seq: forInsert ) {
-                dao.insertSequence(seq);
-            }
-            log.info("SEQ_INSERTED: "+forInsert.size());
+            dao.insertAliases(forInsert);
+            log.info("ALIASES_INSERTED: "+forInsert.size());
         }
 
-        // delete obsolete sequences
-        if( !forDelete.isEmpty() ) {
-            for( Sequence seq: forDelete ) {
-                dao.deleteSequence(seq);
-            }
-            log.info("SEQ_DELETED: "+forDelete.size());
+        int matchingAliases = matching.size();
+        if( matchingAliases!=0 ) {
+            log.info("ALIASES_MATCHED: "+matchingAliases);
         }
-
-        int matchingSeqs = matching.size();
-        if( matchingSeqs!=0 ) {
-            log.info("SEQ_MATCHED: "+matchingSeqs);
-        }
-        */
     }
 }
 

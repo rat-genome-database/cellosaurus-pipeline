@@ -1,11 +1,14 @@
 package edu.mcw.rgd;
 
+import edu.mcw.rgd.dao.impl.AliasDAO;
 import edu.mcw.rgd.dao.impl.CellLineDAO;
 import edu.mcw.rgd.dao.impl.RGDManagementDAO;
+import edu.mcw.rgd.datamodel.Alias;
 import edu.mcw.rgd.datamodel.CellLine;
 import edu.mcw.rgd.datamodel.RgdId;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +20,7 @@ import java.util.List;
  */
 public class Dao {
 
+    AliasDAO aliasDAO = new AliasDAO();
     CellLineDAO cellLineDAO = new CellLineDAO();
     RGDManagementDAO rgdIdDAO = new RGDManagementDAO();
 
@@ -80,5 +84,26 @@ public class Dao {
         log.debug("NEW> "+newCellLine.dump("|"));
 
         cellLineDAO.updateCellLine(newCellLine);
+    }
+
+    /**
+     * load all aliases in RGD, of type 'old_cell_line_name' and 'old_cell_line_symbol'
+     * @return collection of Alias objects
+     */
+    public List<Alias> getAliases() throws Exception {
+        List<Alias> aliases = new ArrayList<>();
+        aliases.addAll(aliasDAO.getAliasesByType("old_cell_line_name"));
+        aliases.addAll(aliasDAO.getAliasesByType("old_cell_line_symbol"));
+        return aliases;
+    }
+
+    public void insertAliases(Collection<Alias> aliasesForInsert) throws Exception {
+
+        Logger log = Logger.getLogger("aliases");
+        for( Alias a: aliasesForInsert ) {
+            log.debug("INSERT "+a.dump("|"));
+        }
+
+        aliasDAO.insertAliases(new ArrayList<>(aliasesForInsert));
     }
 }

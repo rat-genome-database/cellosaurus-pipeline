@@ -1,5 +1,6 @@
 Feb 24, 2020
-  finished cell lines loading: inserts, delets and updates
+  finished cell lines loading: inserts, deletes and updates
+  implemented loading of aliases
 
 Feb 21, 2020
   finished parsing code
