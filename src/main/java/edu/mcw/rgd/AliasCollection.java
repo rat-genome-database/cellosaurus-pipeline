@@ -43,10 +43,10 @@ public class AliasCollection {
         }
     }
 
+    /// we load only new aliases; old aliases are never deleted -- that's our policy
     synchronized public void qc(Dao dao) throws Exception {
 
-        throw new Exception("TODO alias collection");
-
+        throw new Exception("TODO:");
         /*
         // note: for better performance, only some fields are loaded: rgd-id, seq-type and seq-md5
         List<Sequence> inRgdSeqs = dao.getPromoterSequences();

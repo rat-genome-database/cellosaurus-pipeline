@@ -17,6 +17,7 @@ public class DataRecord extends CellLine {
         setObjectStatus("ACTIVE");
         setSoAccId("CL:0000010");
         setSpeciesTypeKey(SpeciesType.UNKNOWN);
+        setSrcPipeline("CELLOSAURUS");
     }
 
     public List<Alias> getAliases() {

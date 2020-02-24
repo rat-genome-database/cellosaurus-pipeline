@@ -48,6 +48,7 @@ public class Parser {
                 }
                 if( line.equals("[Term]") ) {
                     rec = new DataRecord();
+
                 } else {
                     // non-Term entries, f.e. [Typedef]: ignore
                     rec = null;
@@ -263,7 +264,6 @@ public class Parser {
                 rec.setResearchUse(merge(rec.getResearchUse(), pair));
             }
             else if( pair.startsWith("Caution: ")
-                  || pair.startsWith("Misspelling: ")
                   || pair.startsWith("Problematic cell line: ")
                   || pair.startsWith("Shown to be a HeLa derivative (PubMed=1246601; PubMed=6451928: ") // fake
                   || pair.startsWith("Compared to the STR values obtained by other distributors it differed from having: ") // fake
@@ -305,6 +305,13 @@ public class Parser {
                         throw new Exception("unexpected knockout cell");
                     }
                 }
+            }
+            else if( pair.startsWith("Misspelling: ") ) {
+
+                // ALIAS
+                //
+                // f.e. Misspelling: NB-Ebcl-1; Occasionally. ==> 'NB-Ebcl-1'
+                parseMisspelling(pair, rec);
             }
             else {
                 throw new Exception("comment parse error: unknown tag: "+pair);
@@ -361,6 +368,20 @@ public class Parser {
             return s1;
         }
         return s1 + "; " + s2;
+    }
+
+    void parseMisspelling(String line, DataRecord rec) {
+        // ALIAS
+        //
+        // f.e. Misspelling: NB-Ebcl-1; Occasionally. ==> 'NB-Ebcl-1'
+        int symbolStart = 13; // length of 'Misspelling: '
+        int symbolEnd = line.indexOf("; ", symbolStart);
+        String symbol = line.substring(symbolStart, symbolEnd);
+
+        Alias alias = new Alias();
+        alias.setTypeName("old_cell_line_symbol");
+        alias.setValue(symbol);
+        rec.getAliases().add(alias);
     }
 
     public void setSexTypes(Map sexTypes) {

@@ -1,5 +1,6 @@
 package edu.mcw.rgd;
 
+import edu.mcw.rgd.datamodel.Alias;
 import edu.mcw.rgd.datamodel.CellLine;
 import edu.mcw.rgd.process.CounterPool;
 import edu.mcw.rgd.process.FileDownloader;
@@ -60,16 +61,18 @@ public class Main {
         // compare incoming CellLine objects against DB and load the changes
         List<CellLine> inRgdRecords = dao.getCellLines(getSourcePipeline());
 
-        insertDeleteCellLines(incomingRecords, inRgdRecords);
+        qcCellLines(incomingRecords, inRgdRecords);
 
-        qcAndLoadAliases();
+        qcAndLoadAliases(incomingRecords);
         qcAndLoadAssociations();
         qcAndLoadXdbIds();
 
         log.info("OK -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
     }
 
-    void insertDeleteCellLines(List<DataRecord> incomingRecords, List<CellLine> inRgdRecords) throws Exception {
+    void qcCellLines(List<DataRecord> incomingRecords, List<CellLine> inRgdRecords) throws Exception {
+
+        List<CellLine> toBeDeletedCellLines = new ArrayList<>();
 
         // determine to-be-inserted/deleted cell lines by looking at the symbol
         log.info("CELL LINES INCOMING: "+incomingRecords.size());
@@ -84,17 +87,17 @@ public class Main {
 
         Map<String, CellLine> inRgd = new HashMap<>();
         for( CellLine cl: inRgdRecords ) {
-            inRgd.put(cl.getSymbol(), cl);
-        }
-        if( inRgd.size()!=inRgdRecords.size() ) {
-            throw new Exception("duplicate symbol for in-rgd");
+            CellLine oldCellLine = inRgd.put(cl.getSymbol(), cl);
+            if( oldCellLine!=null ) {
+                toBeDeletedCellLines.add(oldCellLine);
+            }
         }
 
         Collection<String> toBeInserted = CollectionUtils.subtract(incoming.keySet(), inRgd.keySet());
         Collection<String> toBeDeleted = CollectionUtils.subtract(inRgd.keySet(), incoming.keySet());
-        //Collection<CellLine> matching = CollectionUtils.intersection(inRgdRecords, incomingRecords);
+        Collection<String> matching = CollectionUtils.intersection(inRgd.keySet(), incoming.keySet());
+        log.info("CELL LINES MATCHING: "+matching.size());
 
-        //log.info("CELL LINES MATCHING: "+matching.size());
         if( toBeInserted.size()!=0 ) {
             List<CellLine> toBeInsertedCellLines = new ArrayList<>();
             for( String symbol: toBeInserted ) {
@@ -105,8 +108,7 @@ public class Main {
             log.info("CELL LINES INSERTED: " + toBeInsertedCellLines.size());
         }
 
-        if( toBeDeleted.size()!=0 ) {
-            List<CellLine> toBeDeletedCellLines = new ArrayList<>();
+        if( toBeDeleted.size()!=0 || toBeDeletedCellLines.size()!=0 ) {
             for( String symbol: toBeDeleted ) {
                 toBeDeletedCellLines.add(inRgd.get(symbol));
             }
@@ -115,11 +117,62 @@ public class Main {
             log.info("CELL LINES DELETED: " + toBeDeletedCellLines.size());
         }
 
-        throw new Exception("TODO: update matching cell lines");
+        // handle matching data
+        int rgdIdsUpdated = 0;
+        int cellLinesUpdated = 0;
+
+        for( String symbol: matching ) {
+            CellLine clIncoming = incoming.get(symbol);
+            CellLine clInRgd = inRgd.get(symbol);
+
+            // RGD_IDS fields
+            clIncoming.setRgdId(clInRgd.getRgdId());
+
+            if( clIncoming.getSpeciesTypeKey()!=clInRgd.getSpeciesTypeKey()
+             || !clIncoming.getObjectStatus().equals(clInRgd.getObjectStatus())
+             || clIncoming.getObjectKey()!=clInRgd.getObjectKey() ) {
+
+                dao.updateRgdId(clIncoming.getRgdId(), clIncoming.getObjectKey(), clIncoming.getSpeciesTypeKey(), clIncoming.getObjectStatus());
+
+                clInRgd.setSpeciesTypeKey(clIncoming.getSpeciesTypeKey());
+                clInRgd.setObjectStatus(clIncoming.getObjectStatus());
+                clInRgd.setObjectKey(clIncoming.getObjectKey());
+
+                rgdIdsUpdated++;
+            }
+
+            // genomic elements fields
+            String cl1 = clIncoming.dump("|");
+            String cl2 = clInRgd.dump("|");
+
+            boolean isEqual = cl1.equals(cl2);
+            if( !isEqual ) {
+                dao.updateCellLine(clInRgd, clIncoming);
+                cellLinesUpdated++;
+            }
+        }
+
+        if( cellLinesUpdated!=0 ) {
+            log.info("CELL LINES UPDATED: " + cellLinesUpdated);
+        }
+        if( rgdIdsUpdated!=0 ) {
+            log.info("CELL LINES RGD IDS UPDATED: " + rgdIdsUpdated);
+        }
     }
 
-    void qcAndLoadAliases() throws Exception {
-        throw new Exception("TODO qc aliases");
+    void qcAndLoadAliases( List<DataRecord> incomingRecords ) throws Exception {
+
+        AliasCollection aliases = AliasCollection.getInstance();
+
+        for( DataRecord rec: incomingRecords ) {
+
+            for( Alias a: rec.getAliases() ) {
+                a.setRgdId(rec.getRgdId());
+                aliases.addIncoming(a);
+            }
+        }
+
+        aliases.qc(dao);
     }
 
     void qcAndLoadAssociations() throws Exception {
