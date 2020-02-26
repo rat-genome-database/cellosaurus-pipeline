@@ -65,9 +65,9 @@ public class Main {
 
         Map<String, CellLine> inRgdMap = qcCellLines(incomingRecords, inRgdRecords);
 
-        qcAndLoadAssociations(incomingRecords, inRgdMap);
         qcAndLoadAliases(incomingRecords);
-        qcAndLoadXdbIds();
+        qcAndLoadAssociations(incomingRecords, inRgdMap);
+        qcAndLoadXdbIds(incomingRecords);
 
         log.info("OK -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
     }
@@ -81,6 +81,10 @@ public class Main {
 
         Map<String, DataRecord> incoming = new HashMap<>();
         for( DataRecord rec: incomingRecords ) {
+            // fixup species type key (negative values were used by the parser)
+            if( rec.getSpeciesTypeKey()<0 ) {
+                rec.setSpeciesTypeKey(0);
+            }
             incoming.put(rec.getSymbol(), rec);
         }
         if( incoming.size()!=incomingRecords.size() ) {
@@ -285,8 +289,19 @@ public class Main {
         assocs.qc(dao, getSourcePipeline());
     }
 
-    void qcAndLoadXdbIds() throws Exception {
-        throw new Exception("TODO qc xdb ids");
+    void qcAndLoadXdbIds( List<DataRecord> incomingRecords ) throws Exception {
+
+        XdbIdCollection xdbIds = XdbIdCollection.getInstance();
+
+        for( DataRecord rec: incomingRecords ) {
+
+            for( XdbId id: rec.getXdbIds() ) {
+                id.setRgdId(rec.getRgdId());
+                xdbIds.addIncoming(id);
+            }
+        }
+
+        xdbIds.qc(dao, getSourcePipeline());
     }
 
     String downloadCellosaurusOboFile() throws Exception {

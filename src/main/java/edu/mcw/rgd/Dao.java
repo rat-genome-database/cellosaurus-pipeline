@@ -4,10 +4,7 @@ import edu.mcw.rgd.dao.impl.*;
 import edu.mcw.rgd.datamodel.*;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author mtutaj
@@ -106,18 +103,32 @@ public class Dao {
     }
 
     public int getGeneRgdIdByXdbId(int xdbKey, String accId) throws Exception {
-        List<Gene> genes = xdao.getActiveGenesByXdbId(xdbKey, accId);
+        String cacheKey = xdbKey+"|"+accId;
+        List<Gene> genes = _xdbGeneMap.get(cacheKey);
+        boolean doWarn = false;
+        if( genes==null ) {
+            genes = xdao.getActiveGenesByXdbId(xdbKey, accId);
+            _xdbGeneMap.put(cacheKey, genes);
+            doWarn = true;
+        }
+
         if( genes.isEmpty() ) {
             Logger log = Logger.getLogger("status");
-            log.warn("cannot resolve "+accId);
+            if( doWarn ) {
+                log.warn("cannot resolve " + accId);
+            }
             return 0;
         } else if( genes.size()>1 ) {
             Logger log = Logger.getLogger("status");
-            log.warn("multiple genes for "+accId);
+            if( doWarn ) {
+                log.warn("multiple genes for " + accId);
+            }
             return 0;
         }
         return genes.get(0).getRgdId();
     }
+    java.util.Map<String, List<Gene>> _xdbGeneMap = new HashMap<>();
+
 
     public List<Association> getAssociations(String assocType, String source) throws Exception {
         return assocDAO.getAssociationsByTypeAndSource(assocType, source);
@@ -134,5 +145,27 @@ public class Dao {
         Logger log = Logger.getLogger("deletedAssociations");
         log.debug(assoc.dump("|"));
         return assocDAO.deleteAssociationByKey(assoc.getAssocKey());
+    }
+
+    public List<XdbId> getXdbIds(String srcPipeline) throws Exception {
+        XdbId filter = new XdbId();
+        filter.setSrcPipeline(srcPipeline);
+        return xdao.getXdbIds(filter);
+    }
+
+    public int insertXdbIds(Collection<XdbId> xdbs) throws Exception {
+        Logger log = Logger.getLogger("insertedXdbIds");
+        for( XdbId id: xdbs ) {
+            log.debug(id.dump("|"));
+        }
+        return xdao.insertXdbs(new ArrayList<>(xdbs));
+    }
+
+    public int deleteXdbIds(Collection<XdbId> xdbs) throws Exception {
+        Logger log = Logger.getLogger("deletedXdbIds");
+        for( XdbId id: xdbs ) {
+            log.debug(id.dump("|"));
+        }
+        return xdao.deleteXdbIds(new ArrayList<>(xdbs));
     }
 }
