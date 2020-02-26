@@ -1,7 +1,9 @@
 package edu.mcw.rgd;
 
 import edu.mcw.rgd.datamodel.Alias;
+import edu.mcw.rgd.datamodel.Association;
 import edu.mcw.rgd.datamodel.CellLine;
+import edu.mcw.rgd.datamodel.XdbId;
 import edu.mcw.rgd.process.CounterPool;
 import edu.mcw.rgd.process.FileDownloader;
 import edu.mcw.rgd.process.Utils;
@@ -61,16 +63,16 @@ public class Main {
         // compare incoming CellLine objects against DB and load the changes
         List<CellLine> inRgdRecords = dao.getCellLines(getSourcePipeline());
 
-        qcCellLines(incomingRecords, inRgdRecords);
+        Map<String, CellLine> inRgdMap = qcCellLines(incomingRecords, inRgdRecords);
 
+        qcAndLoadAssociations(incomingRecords, inRgdMap);
         qcAndLoadAliases(incomingRecords);
-        qcAndLoadAssociations();
         qcAndLoadXdbIds();
 
         log.info("OK -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
     }
 
-    void qcCellLines(List<DataRecord> incomingRecords, List<CellLine> inRgdRecords) throws Exception {
+    Map<String, CellLine> qcCellLines(List<DataRecord> incomingRecords, List<CellLine> inRgdRecords) throws Exception {
 
         List<CellLine> toBeDeletedCellLines = new ArrayList<>();
 
@@ -158,6 +160,8 @@ public class Main {
         if( rgdIdsUpdated!=0 ) {
             log.info("CELL LINES RGD IDS UPDATED: " + rgdIdsUpdated);
         }
+
+        return inRgd;
     }
 
     void qcAndLoadAliases( List<DataRecord> incomingRecords ) throws Exception {
@@ -175,8 +179,110 @@ public class Main {
         aliases.qc(dao);
     }
 
-    void qcAndLoadAssociations() throws Exception {
-        throw new Exception("TODO qc associations");
+    void qcAndLoadAssociations( List<DataRecord> incomingRecords, Map<String, CellLine> inRgdMap ) throws Exception {
+
+        AssociationCollection assocs = AssociationCollection.getInstance();
+
+        for( DataRecord rec: incomingRecords ) {
+
+            for( java.util.Map.Entry<String,String> entry: rec.getGeneAssocs().entrySet() ) {
+                String assocInfo = entry.getKey();
+                String assocSubType = entry.getValue();
+
+                int detailRgdId = 0;
+
+                // sample info: HGNC; 5173; HRAS (with p.Gly12Val)
+                if( assocInfo.contains("HGNC; ") ) {
+                    // extract HGNC id
+                    int startPos = assocInfo.indexOf("HGNC; ") + 6;
+                    int endPos = assocInfo.indexOf("; ", startPos);
+                    if( endPos<0 ) {
+                        log.warn("assoc info: unexpected HGNC: "+assocInfo);
+                    } else {
+                        String hgncId = assocInfo.substring(startPos, endPos);
+                        detailRgdId = dao.getGeneRgdIdByXdbId(XdbId.XDB_KEY_HGNC, "HGNC:" + hgncId);
+                    }
+
+                // sample info: UniProtKB; P00552; Transposon Tn5 neo
+                } else if( assocInfo.contains("UniProtKB; ") ) {
+
+                    // extract uniprot id
+                    int startPos = assocInfo.indexOf("UniProtKB; ") + 11;
+                    int endPos = assocInfo.indexOf("; ", startPos);
+                    String uniProtId = assocInfo.substring(startPos, endPos);
+                    detailRgdId = dao.getGeneRgdIdByXdbId(XdbId.XDB_KEY_UNIPROT, uniProtId);
+
+                    // sample info: Method=KO mouse; MGI; MGI:97306; Nf1
+                } else if( assocInfo.contains("MGI; MGI:") ) {
+
+                    // extract MGI ID
+                    int startPos = assocInfo.indexOf("MGI; MGI:") + 5;
+                    int endPos = assocInfo.indexOf("; ", startPos);
+                    String mgiId = assocInfo.substring(startPos, endPos);
+                    detailRgdId = dao.getGeneRgdIdByXdbId(XdbId.XDB_KEY_MGD, mgiId);
+
+                    // sample info: VGNC; 39653; Dog CSF1R
+                } else if( assocInfo.contains("VGNC; ") ) {
+
+                    // extract VGNC id
+                    int startPos = assocInfo.indexOf("VGNC; ") + 6;
+                    int endPos = assocInfo.indexOf("; ", startPos);
+                    String vgncId = assocInfo.substring(startPos, endPos);
+                    detailRgdId = dao.getGeneRgdIdByXdbId(127, "VGNC:"+vgncId);
+
+                    // RGD; 2425; Csf1r
+                } else if( assocInfo.startsWith("RGD; ") ) {
+
+                    // extract RGD id
+                    int startPos = 5;
+                    int endPos = assocInfo.indexOf("; ", startPos);
+                    String rgdId = assocInfo.substring(startPos, endPos);
+                    detailRgdId = dao.getGeneRgdIdByXdbId(63, "RGD:"+rgdId);
+
+                    // ignored assocs
+                } else {
+                    if( assocInfo.startsWith("tdTomato; ")
+                     || assocInfo.startsWith("Method=Targeted integration; ")
+                     || assocInfo.startsWith("Method=Homologous recombination; ")
+                     || assocInfo.startsWith("FlyBase; ")
+                     || assocInfo.startsWith("Lucia luciferase; ") ) {
+
+                    } else {
+                        log.debug("ASSOC QC: unparsed assoc info: [" + assocInfo + "]");
+                    }
+                }
+
+                if( detailRgdId != 0 ) {
+                    Association a = new Association();
+                    a.setAssocType("celline_to_gene");
+                    a.setAssocSubType(assocSubType);
+                    a.setMasterRgdId(rec.getRgdId());
+                    a.setDetailRgdId(detailRgdId);
+                    a.setSrcPipeline(getSourcePipeline());
+                    assocs.addIncoming(a);
+                }
+            }
+
+            for( java.util.Map.Entry<String,String> entry: rec.getCellLineAssocs().entrySet() ) {
+                String cellLineSymbol = entry.getKey();
+                String assocSubType = entry.getValue();
+
+                CellLine cl = inRgdMap.get(cellLineSymbol);
+                if( cl==null ) {
+                    log.warn("cannot find a cell line with symbol "+cellLineSymbol);
+                } else {
+                    Association a = new Association();
+                    a.setAssocType("celline_to_celline");
+                    a.setAssocSubType(assocSubType);
+                    a.setMasterRgdId(rec.getRgdId());
+                    a.setDetailRgdId(cl.getRgdId());
+                    a.setSrcPipeline(getSourcePipeline());
+                    assocs.addIncoming(a);
+                }
+            }
+        }
+
+        assocs.qc(dao, getSourcePipeline());
     }
 
     void qcAndLoadXdbIds() throws Exception {

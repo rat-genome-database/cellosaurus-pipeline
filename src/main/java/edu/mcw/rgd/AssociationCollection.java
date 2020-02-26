@@ -10,57 +10,83 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author mtutaj
  * @since 4/16/12
- * collection of associations for cell lines:
- *    derived_from_cell_line
+ * collection of associations for cell lines
  */
-abstract public class AssociationCollection {
+public class AssociationCollection {
 
-    abstract public String getAssocType(); // f.e. "promoter_to_gene"
-    abstract public String getLogPrefix(); // f.e. "GENE_ASSOC"
-    abstract public String getLogName(); // f.e. "assoc_genes"
+    // THREAD SAFE SINGLETON -- start
+    // private instance, so that it can be accessed by only by getInstance() method
+    private static AssociationCollection instance;
+
+    private AssociationCollection() {
+        // private constructor
+    }
+
+    //synchronized method to control simultaneous access
+    synchronized public static AssociationCollection getInstance() {
+        if (instance == null) {
+            // if instance is null, initialize
+            instance = new AssociationCollection();
+        }
+        return instance;
+    }
+    // THREAD SAFE SINGLETON -- end
+
 
     Logger log = Logger.getLogger("status");
 
-    private final Map<Association, Object> incoming = new ConcurrentHashMap<>();
+    private final Map<String, Association> incoming = new ConcurrentHashMap<>();
+    private final Map<String, Object> assocTypes = new ConcurrentHashMap<>();
 
-    public void addIncoming(Association assoc) throws Exception {
-        incoming.put(assoc, assoc);
+    private String computeAssocKey(Association a) {
+        return a.getDetailRgdId()+"|"+a.getMasterRgdId()+"|"+a.getAssocType()+"|"+a.getAssocSubType();
     }
 
-    synchronized public void qc(Dao dao, String[] sources) throws Exception {
+    public void addIncoming(Association assoc) throws Exception {
+        incoming.put(computeAssocKey(assoc), assoc);
+        assocTypes.put(assoc.getAssocType(), "");
+    }
 
-        /*
+    synchronized public void qc(Dao dao, String source) throws Exception {
+
         List<Association> inRgdAssocs = new ArrayList<>();
-        for( String source: sources ) {
-            inRgdAssocs.addAll(dao.getAssociations(getAssocType(), source));
+        for( String assocType: assocTypes.keySet() ) {
+            inRgdAssocs.addAll(dao.getAssociations(assocType, source));
         }
 
-        Set<Association> incomingAssocs = incoming.keySet();
+        // build assoc map for in-rgd assocs
+        Map<String, Association> inRgdAssocMap = new HashMap<>();
+        for( Association a: inRgdAssocs ) {
+            inRgdAssocMap.put(computeAssocKey(a), a);
+        }
 
         // determine new associations for insertion
-        Collection<Association> forInsert = CollectionUtils.subtract(incomingAssocs, inRgdAssocs);
+        Collection<String> forInsert = CollectionUtils.subtract(incoming.keySet(), inRgdAssocMap.keySet());
 
         // determine new associations for deletion
-        Collection<Association> forDelete = CollectionUtils.subtract(inRgdAssocs, incomingAssocs);
+        Collection<String> forDelete = CollectionUtils.subtract(inRgdAssocMap.keySet(), incoming.keySet());
 
-        Collection<Association> matching = CollectionUtils.intersection(inRgdAssocs, incomingAssocs);
+        Collection<String> matching = CollectionUtils.intersection(inRgdAssocMap.keySet(), incoming.keySet());
 
 
         // update the database
         if( !forInsert.isEmpty() ) {
-            dao.insertAssociations(forInsert, getLogName());
-            log.info(getLogPrefix()+"_INSERTED: "+forInsert.size());
+            for( String assocKey: forInsert ) {
+                dao.insertAssociation(incoming.get(assocKey));
+            }
+            log.info("ASSOC_INSERTED: "+forInsert.size());
         }
 
         if( !forDelete.isEmpty() ) {
-            dao.deleteAssociations(forDelete, getLogName());
-            log.info(getLogPrefix()+"_DELETED: "+forDelete.size());
+            for( String assocKey: forDelete ) {
+                dao.deleteAssociation(inRgdAssocMap.get(assocKey));
+            }
+            log.info("ASSOC_DELETED: "+forDelete.size());
         }
 
         int matchingAssocs = matching.size();
         if( matchingAssocs!=0 ) {
-            log.info(getLogPrefix()+"_MATCHED: "+matchingAssocs);
+            log.info("ASSOC_MATCHED: "+matchingAssocs);
         }
-        */
     }
 }

@@ -1,11 +1,7 @@
 package edu.mcw.rgd;
 
-import edu.mcw.rgd.dao.impl.AliasDAO;
-import edu.mcw.rgd.dao.impl.CellLineDAO;
-import edu.mcw.rgd.dao.impl.RGDManagementDAO;
-import edu.mcw.rgd.datamodel.Alias;
-import edu.mcw.rgd.datamodel.CellLine;
-import edu.mcw.rgd.datamodel.RgdId;
+import edu.mcw.rgd.dao.impl.*;
+import edu.mcw.rgd.datamodel.*;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -21,8 +17,10 @@ import java.util.List;
 public class Dao {
 
     AliasDAO aliasDAO = new AliasDAO();
+    AssociationDAO assocDAO = new AssociationDAO();
     CellLineDAO cellLineDAO = new CellLineDAO();
     RGDManagementDAO rgdIdDAO = new RGDManagementDAO();
+    XdbIdDAO xdao = new XdbIdDAO();
 
     public String getConnectionInfo() {
         return cellLineDAO.getConnectionInfo();
@@ -105,5 +103,36 @@ public class Dao {
         }
 
         aliasDAO.insertAliases(new ArrayList<>(aliasesForInsert));
+    }
+
+    public int getGeneRgdIdByXdbId(int xdbKey, String accId) throws Exception {
+        List<Gene> genes = xdao.getActiveGenesByXdbId(xdbKey, accId);
+        if( genes.isEmpty() ) {
+            Logger log = Logger.getLogger("status");
+            log.warn("cannot resolve "+accId);
+            return 0;
+        } else if( genes.size()>1 ) {
+            Logger log = Logger.getLogger("status");
+            log.warn("multiple genes for "+accId);
+            return 0;
+        }
+        return genes.get(0).getRgdId();
+    }
+
+    public List<Association> getAssociations(String assocType, String source) throws Exception {
+        return assocDAO.getAssociationsByTypeAndSource(assocType, source);
+    }
+
+    public int insertAssociation( Association assoc ) throws Exception {
+        int r = assocDAO.insertAssociation(assoc);
+        Logger log = Logger.getLogger("insertedAssociations");
+        log.debug(assoc.dump("|"));
+        return r;
+    }
+
+    public int deleteAssociation( Association assoc ) throws Exception {
+        Logger log = Logger.getLogger("deletedAssociations");
+        log.debug(assoc.dump("|"));
+        return assocDAO.deleteAssociationByKey(assoc.getAssocKey());
     }
 }

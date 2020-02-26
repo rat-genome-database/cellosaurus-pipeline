@@ -293,14 +293,14 @@ public class Parser {
                 rec.setGenomicAlteration(merge(rec.getGenomicAlteration(), pair));
 
                 if( pair.startsWith("Transfected with: ") ) {
-                    String oldValue = rec.getGeneAssocs().put(pair.substring(18), "transfected_with");
+                    String oldValue = rec.getGeneAssocs().put(pair.substring(18), "transfected_gene");
                     if( oldValue!=null ) {
                         throw new Exception("unexpected transfected with");
                     }
                 }
 
                 if( pair.startsWith("Knockout cell: ") ) {
-                    String oldValue = rec.getGeneAssocs().put(pair.substring(15), "knockout_cell");
+                    String oldValue = rec.getGeneAssocs().put(pair.substring(15), "knockout_gene");
                     if( oldValue!=null ) {
                         throw new Exception("unexpected knockout cell");
                     }
