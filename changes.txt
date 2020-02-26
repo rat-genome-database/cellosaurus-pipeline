@@ -1,7 +1,7 @@
 Feb 26, 2020
   implemented loading of associations
   implemented loading of xdb ids
-  
+
 Feb 24, 2020
   finished cell lines loading: inserts, deletes and updates
   implemented loading of aliases

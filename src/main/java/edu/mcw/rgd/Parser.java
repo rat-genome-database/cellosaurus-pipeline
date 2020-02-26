@@ -203,6 +203,12 @@ public class Parser {
                 rec.setSpeciesTypeKey(SpeciesType.ALL);
             }
             return;
+        } else if( xrefDb.equals("NCIt") ) {
+            // extract only acc id: 'C21619 ! Mouse mesothelioma' ==> 'C21619'
+            int exPos = xrefAcc.indexOf(" ! ");
+            if( exPos>0 ) {
+                xrefAcc = xrefAcc.substring(0, exPos);
+            }
         }
 
         if( getIgnoredXrefDatabases().contains(xrefDb) ) {
