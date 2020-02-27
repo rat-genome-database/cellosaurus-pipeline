@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="main" class="edu.mcw.rgd.Main">
-        <property name="version" value="Cellosaurus pipeline -- build Feb 26, 2020" />
+        <property name="version" value="Cellosaurus pipeline -- build Feb 27, 2020" />
         <property name="sourcePipeline" value="CELLOSAURUS" />
         <property name="oboFile" value="ftp://ftp.expasy.org/databases/cellosaurus/cellosaurus.obo"/>
         <property name="parser" ref="parser"/>
@@ -138,6 +138,7 @@
                 <entry key="BCGO" value="124"/>
                 <entry key="IGSR" value="125"/>
                 <entry key="HipSci" value="126"/>
+                <entry key="Cellosaurus" value="128"/>
             </map>
         </property>
     </bean>

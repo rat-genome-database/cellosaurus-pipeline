@@ -1,3 +1,6 @@
+Feb 27, 2020
+  added loading of Cellosaurus xdb ids
+
 Feb 26, 2020
   implemented loading of associations
   implemented loading of xdb ids

@@ -68,6 +68,13 @@ public class Parser {
             // id: => CellLine symbol
             else if( line.startsWith("id: ") ) {
                 rec.setSymbol( line.substring(4).trim() );
+
+                // use cell line symbol to create an xdb id to Cellosaurus
+                XdbId xdbId = new XdbId();
+                xdbId.setXdbKey(128); // Cellosaurus
+                xdbId.setAccId(rec.getSymbol());
+                xdbId.setSrcPipeline(srcPipeline);
+                rec.getXdbIds().add(xdbId);
             }
             // name: CellLine name
             else if( line.startsWith("name: ") ) {
