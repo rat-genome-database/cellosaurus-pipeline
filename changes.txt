@@ -1,3 +1,6 @@
+Feb 28, 2020
+  fixed typo in assoc types
+
 Feb 27, 2020
   added loading of Cellosaurus xdb ids
 

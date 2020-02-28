@@ -258,7 +258,7 @@ public class Main {
 
                 if( detailRgdId != 0 ) {
                     Association a = new Association();
-                    a.setAssocType("celline_to_gene");
+                    a.setAssocType("cellline_to_gene");
                     a.setAssocSubType(assocSubType);
                     a.setMasterRgdId(rec.getRgdId());
                     a.setDetailRgdId(detailRgdId);
@@ -276,7 +276,7 @@ public class Main {
                     log.warn("cannot find a cell line with symbol "+cellLineSymbol);
                 } else {
                     Association a = new Association();
-                    a.setAssocType("celline_to_celline");
+                    a.setAssocType("cellline_to_cellline");
                     a.setAssocSubType(assocSubType);
                     a.setMasterRgdId(rec.getRgdId());
                     a.setDetailRgdId(cl.getRgdId());
