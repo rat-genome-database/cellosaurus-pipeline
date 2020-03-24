@@ -69,6 +69,8 @@ public class Main {
         qcAndLoadAssociations(incomingRecords, inRgdMap);
         qcAndLoadXdbIds(incomingRecords);
 
+        log.info(counters.dumpAlphabetically());
+
         log.info("OK -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
     }
 
@@ -258,7 +260,7 @@ public class Main {
 
                 if( detailRgdId != 0 ) {
                     Association a = new Association();
-                    a.setAssocType("cellline_to_gene");
+                    a.setAssocType("cell_line_to_gene");
                     a.setAssocSubType(assocSubType);
                     a.setMasterRgdId(rec.getRgdId());
                     a.setDetailRgdId(detailRgdId);
@@ -276,7 +278,7 @@ public class Main {
                     log.warn("cannot find a cell line with symbol "+cellLineSymbol);
                 } else {
                     Association a = new Association();
-                    a.setAssocType("cellline_to_cellline");
+                    a.setAssocType("cell_line_to_cell_line");
                     a.setAssocSubType(assocSubType);
                     a.setMasterRgdId(rec.getRgdId());
                     a.setDetailRgdId(cl.getRgdId());

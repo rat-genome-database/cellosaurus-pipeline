@@ -183,6 +183,9 @@ public class Parser {
                 // fixup for DOI:xxx with ':' in the doid id
                 pair[1] += ":" + pair[2];
 
+            } else if( pair.length==3 && pair[0].startsWith("ORDO") ) {
+                pair[1] += ":" + pair[2];
+
             } else if( pair.length==5 && pair[0].equals("DOI") ) {
                 pair[1] += ":" + pair[2] + ":" + pair[3]+ ":" + pair[4];
 
@@ -210,11 +213,25 @@ public class Parser {
                 rec.setSpeciesTypeKey(SpeciesType.ALL);
             }
             return;
+
         } else if( xrefDb.equals("NCIt") ) {
             // extract only acc id: 'C21619 ! Mouse mesothelioma' ==> 'C21619'
             int exPos = xrefAcc.indexOf(" ! ");
             if( exPos>0 ) {
                 xrefAcc = xrefAcc.substring(0, exPos);
+            }
+        } else if( xrefDb.equals("ORDO") ) {
+            // extract only acc id: 'Orphanet_360 ! Glioblastoma' ==> '360'
+            int exPos = xrefAcc.indexOf(" ! ");
+            if( exPos>0 && xrefAcc.startsWith("Orphanet_") ) {
+
+                xrefAcc = xrefAcc.substring(9, exPos);
+                XdbId xdbId = new XdbId();
+                xdbId.setXdbKey(62);
+                xdbId.setAccId(xrefAcc);
+                xdbId.setSrcPipeline(srcPipeline);
+                rec.getXdbIds().add(xdbId);
+                return;
             }
         }
 
@@ -257,6 +274,7 @@ public class Parser {
                   || pair.startsWith("Derived from metastatic site: ")
                   || pair.startsWith("Derived from sampling site: ")
                   || pair.startsWith("Population: ")
+                  || pair.startsWith("Karyotypic information: ")
                   || pair.startsWith("Selected for resistance to: ")
                   || pair.startsWith("Transformant: ") ) {
                 // CELL_LINES.ORIGIN
@@ -325,8 +343,8 @@ public class Parser {
                 //
                 // f.e. Misspelling: NB-Ebcl-1; Occasionally. ==> 'NB-Ebcl-1'
                 parseMisspelling(pair, rec);
-            }
-            else {
+
+            } else {
                 throw new Exception("comment parse error: unknown tag: "+pair);
             }
         }
