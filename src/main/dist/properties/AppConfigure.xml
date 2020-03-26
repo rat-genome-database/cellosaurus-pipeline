@@ -144,9 +144,10 @@
     </bean>
 
     <bean id="annotator" class="edu.mcw.rgd.Annotator">
+        <property name="version" value="Cellosaurus Disease Annotation pipeline -- build Mar 26, 2020" />
         <property name="createdBy" value="73" />
         <property name="refRgdId" value="21410187" />
-        <property name="evidenceCode" value="EXP" />
+        <property name="evidenceCode" value="IEA" />
         <property name="sourcePipeline" value="CELLOSAURUS" />
         <property name="staleAnnotThreshold" value="5%" />
     </bean>

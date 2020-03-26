@@ -2,15 +2,17 @@ package edu.mcw.rgd;
 
 import edu.mcw.rgd.datamodel.ontology.Annotation;
 import edu.mcw.rgd.process.Utils;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
 /**
  * @author mtutaj
- * @since 2020-03-03
+ * @since 2020-03-26
  */
 public class AnnotCache {
 
+    private int origAnnotInRgdCount;
     private Map<String, Annotation> _cacheMap = new HashMap<>();
     private Set<Integer> annotKeysUpdated = new HashSet<>();
     // in-RGD annotations with a need to update NOTES
@@ -66,7 +68,8 @@ public class AnnotCache {
                 System.out.println("   "+a.dump("|"));
             }
         }
-        return annotations.size();
+        origAnnotInRgdCount = annotations.size();
+        return origAnnotInRgdCount;
     }
 
     /**
@@ -102,7 +105,7 @@ public class AnnotCache {
         annot.setKey(annotInRgd.getKey());
         annotKeysUpdated.add(annotInRgd.getKey());
 
-        // check if fields changed: DATA_SRC, RELATIVE_TO, NOTES
+        // check if fields changed: NOTES
         if( !areSameAnnotations(annotInRgd, annot) ) {
 
             Annotation a = annotsForUpdate.get(annot.getKey());
@@ -158,19 +161,19 @@ public class AnnotCache {
                 +"|" + Utils.defaultString(a.getEvidence());
     }
 
-    public void deleteStaleAnnotations(Dao dao) throws Exception {
+    public void deleteStaleAnnotations(Dao dao, int refRgdId, int staleAnnotThreshold, Date dtStart, Logger log) throws Exception {
 
         // get total number of annotations in database
-        int totalAnnots = dao.getCountOfAnnotationsByReference(getRefRgdId(), getDataSource());
+        int totalAnnots = dao.getCountOfAnnotationsByReference(refRgdId);
 
         // compute maximum allowed number of stale annotations to be deleted
-        int staleAnnotDeleteLimit = (getStaleAnnotThreshold() * totalAnnots) / 100;
+        int staleAnnotDeleteLimit = (staleAnnotThreshold * totalAnnots) / 100;
 
         List<Annotation> staleAnnots = getStaleAnnotations(dtStart);
 
         final int recordsRemoved = dao.deleteAnnotations(staleAnnots, staleAnnotDeleteLimit);
         if( recordsRemoved > staleAnnotDeleteLimit ) {
-            log.info("*** stale annotations "+getStaleAnnotThreshold()+"% threshold is "+staleAnnotDeleteLimit);
+            log.info("*** stale annotations "+staleAnnotThreshold+"% threshold is "+staleAnnotDeleteLimit);
             log.warn("*** DELETE ABORTED: count of stale annotations "+recordsRemoved+" exceeds the allowed limit of "+staleAnnotDeleteLimit);
         } else if( recordsRemoved!=0 ){
             log.info(recordsRemoved + " stale annotations have been removed");

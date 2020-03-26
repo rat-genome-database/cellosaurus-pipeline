@@ -1,26 +1,62 @@
 package edu.mcw.rgd;
 
+import edu.mcw.rgd.datamodel.RgdId;
 import edu.mcw.rgd.datamodel.XdbId;
 import edu.mcw.rgd.datamodel.ontology.Annotation;
 import edu.mcw.rgd.process.Utils;
 import org.apache.log4j.Logger;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Annotator {
 
+    private String version;
     private int createdBy;
     private int refRgdId;
     private String evidenceCode;
     private String sourcePipeline;
+    private String staleAnnotThreshold;
 
     Logger log = Logger.getLogger("annot");
     Dao dao = new Dao();
-    private String staleAnnotThreshold;
+    Date dtStart;
+    AnnotCache annotCache = new AnnotCache();
 
     public void run() throws Exception {
 
+        dtStart = new Date();
+        log.info(getVersion());
+        log.info("   "+dao.getConnectionInfo());
+        SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        log.info("   started at "+sdt.format(dtStart));
+
+        int inRgdAnnotCount = annotCache.loadAnnotations(dao, getRefRgdId());
+        log.info(inRgdAnnotCount+" in-rgd annotations preloaded");
+
         List<Annotation> incomingAnnots = loadIncomingAnnots();
+        log.info(incomingAnnots.size()+" incoming annotations");
+
+        int annotsInserted = 0;
+        for( Annotation a: incomingAnnots ) {
+            if( annotCache.insertOrUpdateAnnotation(a, dao) != 0 ) {
+                annotsInserted++;
+            }
+        }
+        log.info(annotsInserted+" inserted annotations");
+
+        annotCache.updateAnnotations(dao);
+
+        log.info(annotCache.getCountOfModifiedAnnots()+" modified annotation notes");
+        log.info(annotCache.getCountOfUpToDateAnnots()+" up-to-date annotations");
+
+        int staleAnnotThreshold = 0;
+        if( getStaleAnnotThreshold().endsWith("%") ) {
+            staleAnnotThreshold = Integer.parseInt(getStaleAnnotThreshold().substring(0, getStaleAnnotThreshold().length()-1));
+        }
+        annotCache.deleteStaleAnnotations(dao, getRefRgdId(), staleAnnotThreshold, dtStart, log);
+
+        log.info("=== OK === elapsed "+Utils.formatElapsedTime(dtStart.getTime(), System.currentTimeMillis()));
     }
 
     List<Annotation> loadIncomingAnnots() throws Exception {
@@ -40,8 +76,10 @@ public class Annotator {
                 String notes = entry1.getValue();
 
                 Annotation a = new Annotation();
-                a.setLastModifiedBy(getCreatedBy());
                 a.setCreatedBy(getCreatedBy());
+                a.setLastModifiedBy(getCreatedBy());
+                a.setCreatedDate(new Date());
+                a.setLastModifiedDate(a.getCreatedDate());
                 a.setAnnotatedObjectRgdId(rgdId);
                 a.setAspect("D");
                 a.setDataSrc(getSourcePipeline());
@@ -49,6 +87,10 @@ public class Annotator {
                 a.setRefRgdId(getRefRgdId());
                 a.setNotes(notes);
                 a.setTermAcc(doTermAcc);
+                a.setTerm(doTermAcc);
+                a.setRgdObjectKey(RgdId.OBJECT_KEY_CELL_LINES);
+                a.setObjectName("RGD:"+rgdId);
+                a.setObjectSymbol("RGD:"+rgdId);
                 annots.add(a);
             }
         }
@@ -127,6 +169,14 @@ public class Annotator {
 
     public String getStaleAnnotThreshold() {
         return staleAnnotThreshold;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getVersion() {
+        return version;
     }
 }
 

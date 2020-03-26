@@ -2,6 +2,7 @@ package edu.mcw.rgd;
 
 import edu.mcw.rgd.dao.impl.*;
 import edu.mcw.rgd.datamodel.*;
+import edu.mcw.rgd.datamodel.ontology.Annotation;
 import edu.mcw.rgd.datamodel.ontologyx.TermSynonym;
 import org.apache.log4j.Logger;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 public class Dao {
 
     AliasDAO aliasDAO = new AliasDAO();
+    AnnotationDAO adao = new AnnotationDAO();
     AssociationDAO assocDAO = new AssociationDAO();
     CellLineDAO cellLineDAO = new CellLineDAO();
     OntologyXDAO odao = new OntologyXDAO();
@@ -179,6 +181,7 @@ public class Dao {
         return xdao.deleteXdbIds(new ArrayList<>(xdbs));
     }
 
+    /// ONTOLOGIES
 
     public Map<String, String> getRdoTermsWithSynonymPattern(String pattern) throws Exception {
 
@@ -191,5 +194,54 @@ public class Dao {
             }
         }
         return results;
+    }
+
+    /// ANNOTATIONS
+
+    public List<Annotation> getAnnotations(int refRgdId) throws Exception {
+        return adao.getAnnotationsByReference(refRgdId);
+    }
+
+    public int insertAnnotation(Annotation a) throws Exception {
+        Logger log = Logger.getLogger("annotInserted");
+        int key = adao.insertAnnotation(a);
+        log.debug(a.dump("|"));
+        return key;
+    }
+
+    public void updateAnnotation(Annotation newAnnot, Annotation oldAnnot) throws Exception {
+
+        Logger log = Logger.getLogger("annotUpdated");
+        log.debug("OLD_ANNOT: "+oldAnnot.dump("|"));
+        log.debug("NEW_ANNOT: "+newAnnot.dump("|"));
+
+        // insert the annotation
+        adao.updateAnnotation(newAnnot);
+    }
+
+    public int getCountOfAnnotationsByReference(int refRgdId) throws Exception {
+        return adao.getCountOfAnnotationsByReference(refRgdId);
+    }
+
+    public int deleteAnnotations(List<Annotation> staleAnnots, int staleAnnotThreshold) throws Exception {
+
+        // get to-be-deleted stale annots and check if their nr does not exceed the threshold
+        Logger log = Logger.getLogger("annotDeleted");
+        if( staleAnnots.size() > staleAnnotThreshold ) {
+            for( Annotation annot: staleAnnots ) {
+                log.debug("TO-BE-DELETED "+annot.dump("|"));
+            }
+            return staleAnnots.size();
+        }
+
+        // dump all to be deleted annotation to 'deleted_annots' log
+        List<Integer> fullAnnotKeys = new ArrayList<>(staleAnnots.size());
+        for( Annotation annot: staleAnnots ) {
+            log.info("DELETED "+annot.dump("|"));
+            fullAnnotKeys.add(annot.getKey());
+        }
+
+        // delete the annotations
+        return adao.deleteAnnotations(fullAnnotKeys);
     }
 }

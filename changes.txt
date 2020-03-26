@@ -1,3 +1,6 @@
+Mar 26, 2020
+  annotator: creates IEA annotations based on NCI/ORDO mappings to RDO ontology
+
 Mar 23, 2020
   parser: added handling of 'Karyotypic information' and ORDO xdb ids
 
