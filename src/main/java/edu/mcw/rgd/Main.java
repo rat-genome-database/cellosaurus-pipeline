@@ -37,8 +37,22 @@ public class Main {
         new XmlBeanDefinitionReader(bf).loadBeanDefinitions(new FileSystemResource("properties/AppConfigure.xml"));
         Main instance = (Main) (bf.getBean("main"));
 
+        boolean runAnnotator = false;
+        for( String arg: args ) {
+            switch (arg) {
+                case "--annotator":
+                    runAnnotator = true;
+                    break;
+            }
+        }
+
         try {
-            instance.run();
+            if( runAnnotator ) {
+                Annotator annotator = (Annotator) (bf.getBean("annotator"));
+                annotator.run();
+            } else {
+                instance.run();
+            }
         }catch (Exception e) {
             Utils.printStackTrace(e, instance.log);
             throw e;

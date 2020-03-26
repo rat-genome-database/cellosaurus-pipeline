@@ -142,6 +142,14 @@
             </map>
         </property>
     </bean>
+
+    <bean id="annotator" class="edu.mcw.rgd.Annotator">
+        <property name="createdBy" value="73" />
+        <property name="refRgdId" value="21410187" />
+        <property name="evidenceCode" value="EXP" />
+        <property name="sourcePipeline" value="CELLOSAURUS" />
+        <property name="staleAnnotThreshold" value="5%" />
+    </bean>
 </beans>
 
 

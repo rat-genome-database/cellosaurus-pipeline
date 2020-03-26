@@ -2,9 +2,11 @@ package edu.mcw.rgd;
 
 import edu.mcw.rgd.dao.impl.*;
 import edu.mcw.rgd.datamodel.*;
+import edu.mcw.rgd.datamodel.ontologyx.TermSynonym;
 import org.apache.log4j.Logger;
 
 import java.util.*;
+import java.util.Map;
 
 /**
  * @author mtutaj
@@ -16,6 +18,7 @@ public class Dao {
     AliasDAO aliasDAO = new AliasDAO();
     AssociationDAO assocDAO = new AssociationDAO();
     CellLineDAO cellLineDAO = new CellLineDAO();
+    OntologyXDAO odao = new OntologyXDAO();
     RGDManagementDAO rgdIdDAO = new RGDManagementDAO();
     XdbIdDAO xdao = new XdbIdDAO();
 
@@ -153,6 +156,13 @@ public class Dao {
         return xdao.getXdbIds(filter);
     }
 
+    public List<XdbId> getXdbIds(String srcPipeline, int xdbKey) throws Exception {
+        XdbId filter = new XdbId();
+        filter.setXdbKey(xdbKey);
+        filter.setSrcPipeline(srcPipeline);
+        return xdao.getXdbIds(filter);
+    }
+
     public int insertXdbIds(Collection<XdbId> xdbs) throws Exception {
         Logger log = Logger.getLogger("insertedXdbIds");
         for( XdbId id: xdbs ) {
@@ -167,5 +177,19 @@ public class Dao {
             log.debug(id.dump("|"));
         }
         return xdao.deleteXdbIds(new ArrayList<>(xdbs));
+    }
+
+
+    public Map<String, String> getRdoTermsWithSynonymPattern(String pattern) throws Exception {
+
+        Map<String, String> results = new HashMap<>();
+        List<TermSynonym> synonyms = odao.getActiveSynonymsByNamePattern("RDO", pattern);
+        for( TermSynonym syn: synonyms ) {
+            String termAcc = results.put(syn.getName(), syn.getTermAcc());
+            if( termAcc!=null && !termAcc.equals(syn.getTermAcc()) ) {
+                System.out.println("CONFLICT: "+syn.getName()+" "+termAcc+" "+syn.getTermAcc());
+            }
+        }
+        return results;
     }
 }
