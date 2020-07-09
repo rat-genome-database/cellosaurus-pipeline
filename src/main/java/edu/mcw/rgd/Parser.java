@@ -266,7 +266,8 @@ public class Parser {
             else if( pair.startsWith("Characteristics: ")
                   || pair.startsWith("Contains 11 integrated HTLV-1 proviruses: ")
                   || pair.startsWith("Monoclonal antibody isotype: ")
-                  || pair.startsWith("Monoclonal antibody target: ") ) {
+                  || pair.startsWith("Monoclonal antibody target: ")
+                  || pair.startsWith("The resulting cell line expresses two ligA variants: ") ) {
                 // CELL_LINES.CHARACTERISTICS
                 rec.setCharacteristics(merge(rec.getCharacteristics(), pair));
             }

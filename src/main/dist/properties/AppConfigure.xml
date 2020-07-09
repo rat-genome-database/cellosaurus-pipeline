@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="main" class="edu.mcw.rgd.Main">
-        <property name="version" value="Cellosaurus pipeline -- build Mar 23, 2020" />
+        <property name="version" value="Cellosaurus pipeline -- build Jul 09, 2020" />
         <property name="sourcePipeline" value="CELLOSAURUS" />
         <property name="oboFile" value="ftp://ftp.expasy.org/databases/cellosaurus/cellosaurus.obo"/>
         <property name="parser" ref="parser"/>
@@ -61,7 +61,9 @@
                 <value>ISCR</value>
                 <value>IZSLER</value>
                 <value>KCB</value>
+                <value>Kerafast</value>
                 <value>KYinno</value>
+                <value>LIMORE</value>
                 <value>MCCL</value>
                 <value>Millipore</value>
                 <value>NCBI_Iran</value>
