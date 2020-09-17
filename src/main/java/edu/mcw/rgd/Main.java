@@ -83,6 +83,8 @@ public class Main {
         qcAndLoadAssociations(incomingRecords, inRgdMap);
         qcAndLoadXdbIds(incomingRecords);
 
+        NciCollection.getInstance().qc(dao, counters);
+
         log.info(counters.dumpAlphabetically());
 
         log.info("OK -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));

@@ -3,6 +3,7 @@ package edu.mcw.rgd;
 import edu.mcw.rgd.dao.impl.*;
 import edu.mcw.rgd.datamodel.*;
 import edu.mcw.rgd.datamodel.ontology.Annotation;
+import edu.mcw.rgd.datamodel.ontologyx.Term;
 import edu.mcw.rgd.datamodel.ontologyx.TermSynonym;
 import org.apache.log4j.Logger;
 
@@ -194,6 +195,18 @@ public class Dao {
             }
         }
         return results;
+    }
+
+    public List<Term> getActiveTerms(String ontologyId) throws Exception {
+        return odao.getActiveTerms(ontologyId);
+    }
+
+    public List<TermSynonym> getActiveSynonymsByType(String ontologyId, String synonymType) throws Exception {
+        return odao.getActiveSynonymsByType(ontologyId, synonymType);
+    }
+
+    public int insertTermSynonym(TermSynonym synonym) throws Exception {
+        return odao.insertTermSynonym(synonym);
     }
 
     /// ANNOTATIONS

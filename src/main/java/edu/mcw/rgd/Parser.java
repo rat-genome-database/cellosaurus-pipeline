@@ -1,7 +1,6 @@
 package edu.mcw.rgd;
 
 import edu.mcw.rgd.datamodel.Alias;
-import edu.mcw.rgd.datamodel.Association;
 import edu.mcw.rgd.datamodel.SpeciesType;
 import edu.mcw.rgd.datamodel.XdbId;
 import edu.mcw.rgd.process.CounterPool;
@@ -218,7 +217,9 @@ public class Parser {
             // extract only acc id: 'C21619 ! Mouse mesothelioma' ==> 'C21619'
             int exPos = xrefAcc.indexOf(" ! ");
             if( exPos>0 ) {
+                String nciTermName = xrefAcc.substring(exPos+3);
                 xrefAcc = xrefAcc.substring(0, exPos);
+                NciCollection.getInstance().addIncoming("NCI:"+xrefAcc, nciTermName);
             }
         } else if( xrefDb.equals("ORDO") ) {
             // extract only acc id: 'Orphanet_360 ! Glioblastoma' ==> '360'
