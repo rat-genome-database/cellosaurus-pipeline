@@ -1,3 +1,6 @@
+Sep 18, 2020
+  loader: better handling of species specific NCI ids
+
 Sep 17, 2020
   loader: added loading of NCI ids (esp. species specific NCI ids) to RDO ontology
 

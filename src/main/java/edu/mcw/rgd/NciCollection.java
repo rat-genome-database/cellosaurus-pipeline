@@ -62,6 +62,8 @@ public class NciCollection {
             String speciesPrefix = speciesName.substring(0, 1).toUpperCase() + speciesName.substring(1) + " ";
             speciesPrefixes.add(speciesPrefix);
         }
+        speciesPrefixes.add("Canine "); // for dog
+        speciesPrefixes.add("Porcine "); // for pig
 
         // NCI ids in RGD
         Map<String, String> doTermMap = dao.getRdoTermsWithSynonymPattern("NCI%");
@@ -114,7 +116,7 @@ public class NciCollection {
             String normalizedName = normalizeName(t.getTerm());
             String previousAcc = result.put(normalizedName, t.getAccId());
             if( previousAcc!=null && !previousAcc.equals(t.getAccId())) {
-                System.out.println("name conflict: "+t.getTerm()+" "+previousAcc+" "+t.getAccId());
+                log.info("name conflict: "+t.getTerm()+" "+previousAcc+" "+t.getAccId());
             }
         }
         return result;
@@ -128,7 +130,7 @@ public class NciCollection {
             String normalizedName = normalizeName(ts.getName());
             String previousAcc = result.put(normalizedName, ts.getTermAcc());
             if( previousAcc!=null && !previousAcc.equals(ts.getTermAcc())) {
-                System.out.println("synonym conflict: "+ts.getName()+" "+previousAcc+" "+ts.getTermAcc());
+                log.info("synonym conflict: "+ts.getName()+" "+previousAcc+" "+ts.getTermAcc());
             }
         }
         return result;
