@@ -73,6 +73,7 @@ public class Annotator {
             Map<String, String> doAccMap = entry.getValue();
             for( Map.Entry<String, String> entry1: doAccMap.entrySet() ) {
                 String doTermAcc = entry1.getKey();
+                String doTermName = dao.getTermByAcc(doTermAcc).getTerm();
                 String notes = entry1.getValue();
 
                 Annotation a = new Annotation();
@@ -87,7 +88,7 @@ public class Annotator {
                 a.setRefRgdId(getRefRgdId());
                 a.setNotes(notes);
                 a.setTermAcc(doTermAcc);
-                a.setTerm(doTermAcc);
+                a.setTerm(doTermName);
                 a.setRgdObjectKey(RgdId.OBJECT_KEY_CELL_LINES);
                 a.setObjectName("RGD:"+rgdId);
                 a.setObjectSymbol("RGD:"+rgdId);

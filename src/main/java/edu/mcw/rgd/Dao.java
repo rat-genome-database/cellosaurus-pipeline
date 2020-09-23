@@ -201,6 +201,10 @@ public class Dao {
         return odao.getActiveTerms(ontologyId);
     }
 
+    public Term getTermByAcc(String termAcc) throws Exception {
+        return odao.getTermByAccId(termAcc);
+    }
+
     public List<TermSynonym> getActiveSynonymsByType(String ontologyId, String synonymType) throws Exception {
         return odao.getActiveSynonymsByType(ontologyId, synonymType);
     }

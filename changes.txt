@@ -1,3 +1,6 @@
+Sep 23, 2020
+  annotator: put correct term names in annotations (not term acc ids)
+
 Sep 18, 2020
   loader: better handling of species specific NCI ids
 
