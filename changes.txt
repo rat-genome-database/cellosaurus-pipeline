@@ -1,3 +1,6 @@
+Nov 24, 2020
+  parser: added support for XDB ID 'Progenetix'
+
 Sep 23, 2020
   annotator: put correct term names in annotations (not term acc ids)
 
