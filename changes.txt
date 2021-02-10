@@ -1,3 +1,6 @@
+Feb 09, 2021
+  parser: added support for XDB ID 'Horizon_Discovery'
+
 Nov 24, 2020
   parser: added support for XDB ID 'Progenetix'
 
