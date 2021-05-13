@@ -1,3 +1,6 @@
+May 13, 2021
+  annotator: improved summary
+
 Feb 09, 2021
   parser: added support for XDB ID 'Horizon_Discovery'
 

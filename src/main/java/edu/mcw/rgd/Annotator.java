@@ -32,10 +32,10 @@ public class Annotator {
         log.info("   started at "+sdt.format(dtStart));
 
         int inRgdAnnotCount = annotCache.loadAnnotations(dao, getRefRgdId());
-        log.info(inRgdAnnotCount+" in-rgd annotations preloaded");
+        log.info(" in-rgd annotations preloaded: "+Utils.formatThousands(inRgdAnnotCount));
 
         List<Annotation> incomingAnnots = loadIncomingAnnots();
-        log.info(incomingAnnots.size()+" incoming annotations");
+        log.info(" incoming annotations: "+Utils.formatThousands(incomingAnnots.size()));
 
         int annotsInserted = 0;
         for( Annotation a: incomingAnnots ) {
@@ -43,12 +43,12 @@ public class Annotator {
                 annotsInserted++;
             }
         }
-        log.info(annotsInserted+" inserted annotations");
+        log.info(" inserted annotations: "+Utils.formatThousands(annotsInserted));
 
         annotCache.updateAnnotations(dao);
 
-        log.info(annotCache.getCountOfModifiedAnnots()+" modified annotation notes");
-        log.info(annotCache.getCountOfUpToDateAnnots()+" up-to-date annotations");
+        log.info(" modified annotation notes: "+Utils.formatThousands(annotCache.getCountOfModifiedAnnots()));
+        log.info(" up-to-date annotations: "+Utils.formatThousands(annotCache.getCountOfUpToDateAnnots()));
 
         int staleAnnotThreshold = 0;
         if( getStaleAnnotThreshold().endsWith("%") ) {
