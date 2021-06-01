@@ -1,3 +1,6 @@
+Jun 01, 2021
+  parser: added support for XDB ID 'PerkinElmer'; fixed logic for some new data
+
 May 13, 2021
   annotator: improved summary
 

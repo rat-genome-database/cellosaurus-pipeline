@@ -172,7 +172,7 @@ public class Parser {
                 // fixup for MCCL:  'MCCL:MCC:0000361'
                 pair[1] += ":" + pair[2];
 
-            } else if( pair.length==3 && pair[0].equals("CLS") ) {
+            } else if( pair.length>=3 && pair[0].equals("CLS") ) {
                 pair[1] += ":" + pair[2];
 
             } else if( pair.length==3 && pair[0].equals("MMRRC") ) {
@@ -328,7 +328,8 @@ public class Parser {
                 if( pair.startsWith("Transfected with: ") ) {
                     String oldValue = rec.getGeneAssocs().put(pair.substring(18), "transfected_gene");
                     if( oldValue!=null ) {
-                        throw new Exception("unexpected transfected with");
+                        //throw new Exception("unexpected transfected with");
+                        System.out.println("   WARNING: unexpected: "+pair);
                     }
                 }
 

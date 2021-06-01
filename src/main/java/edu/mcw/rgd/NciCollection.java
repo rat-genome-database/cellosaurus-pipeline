@@ -128,6 +128,7 @@ public class NciCollection {
         List<TermSynonym> synonyms = dao.getActiveSynonymsByType("RDO", "exact_synonym");
         for( TermSynonym ts: synonyms ) {
             String normalizedName = normalizeName(ts.getName());
+
             String previousAcc = result.put(normalizedName, ts.getTermAcc());
             if( previousAcc!=null && !previousAcc.equals(ts.getTermAcc())) {
                 log.info("synonym conflict: "+ts.getName()+" "+previousAcc+" "+ts.getTermAcc());
