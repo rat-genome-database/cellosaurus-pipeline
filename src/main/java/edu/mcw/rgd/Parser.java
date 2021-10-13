@@ -224,14 +224,25 @@ public class Parser {
         } else if( xrefDb.equals("ORDO") ) {
             // extract only acc id: 'Orphanet_360 ! Glioblastoma' ==> '360'
             int exPos = xrefAcc.indexOf(" ! ");
-            if( exPos>0 && xrefAcc.startsWith("Orphanet_") ) {
-
-                xrefAcc = xrefAcc.substring(9, exPos);
-                XdbId xdbId = new XdbId();
-                xdbId.setXdbKey(62);
-                xdbId.setAccId(xrefAcc);
-                xdbId.setSrcPipeline(srcPipeline);
-                rec.getXdbIds().add(xdbId);
+            if( exPos>0 ) {
+                if( xrefAcc.startsWith("Orphanet_") ) {
+                    xrefAcc = xrefAcc.substring(9, exPos);
+                    XdbId xdbId = new XdbId();
+                    xdbId.setXdbKey(62);
+                    xdbId.setAccId(xrefAcc);
+                    xdbId.setSrcPipeline(srcPipeline);
+                    rec.getXdbIds().add(xdbId);
+                } else {
+                    // handle typo in acc
+                    if( xrefAcc.startsWith("Orphanet;_") ) {
+                        xrefAcc = xrefAcc.substring(10, exPos);
+                        XdbId xdbId = new XdbId();
+                        xdbId.setXdbKey(62);
+                        xdbId.setAccId(xrefAcc);
+                        xdbId.setSrcPipeline(srcPipeline);
+                        rec.getXdbIds().add(xdbId);
+                    }
+                }
                 return;
             }
         }

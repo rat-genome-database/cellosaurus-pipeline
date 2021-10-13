@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="main" class="edu.mcw.rgd.Main">
-        <property name="version" value="Cellosaurus pipeline -- build Jun 01, 2021" />
+        <property name="version" value="Cellosaurus pipeline -- build Oct 13, 2021" />
         <property name="sourcePipeline" value="CELLOSAURUS" />
         <property name="oboFile" value="ftp://ftp.expasy.org/databases/cellosaurus/cellosaurus.obo"/>
         <property name="parser" ref="parser"/>
@@ -55,6 +55,7 @@
                 <value>FCDI</value>
                 <value>FCS-free</value>
                 <value>FlyBase</value>
+                <value>HIVReagentProgram</value>
                 <value>IARC_TP53</value>
                 <value>IBRC</value>
                 <value>Imanis</value>
@@ -144,6 +145,7 @@
                 <entry key="Progenetix" value="131"/>
                 <entry key="Horizon_Discovery" value="132"/>
                 <entry key="PerkinElmer" value="133"/>
+                <entry key="SLKBase" value="134"/>
             </map>
         </property>
     </bean>

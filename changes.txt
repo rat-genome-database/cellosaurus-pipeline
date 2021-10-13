@@ -1,3 +1,6 @@
+Oct 13, 2021
+  parser: added support fro XDB_ID 'SLKBase'; added patch for some malformed ORDO ids
+  
 Jun 01, 2021
   parser: added support for XDB ID 'PerkinElmer'; fixed logic for some new data
 
