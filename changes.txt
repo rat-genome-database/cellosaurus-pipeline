@@ -1,5 +1,6 @@
 Feb 21, 2022
   updated log4j to avoid zero day exploit
+  fixed parser; added handling of xdb ids: (ignored: FlyBase_Cell_line, Abcam, NRFC; added: EGA)
 
 Oct 13, 2021
   parser: added support fro XDB_ID 'SLKBase'; added patch for some malformed ORDO ids

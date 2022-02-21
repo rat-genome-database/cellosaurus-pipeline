@@ -325,7 +325,8 @@ public class Parser {
                 // GENOMIC_ELEMENTS.SOURCE
                 rec.setSource(merge(rec.getSource(), pair));
             }
-            else if( pair.startsWith("Anecdotal: ")
+            else if( pair.startsWith("At 66th passage:")
+                  || pair.startsWith("Anecdotal: ")
                   || pair.startsWith("Miscellaneous: ") ) {
                 // GENOMIC_ELEMENTS.NOTES
                 rec.setNotes(merge(rec.getNotes(), pair));

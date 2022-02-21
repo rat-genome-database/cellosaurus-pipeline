@@ -41,6 +41,7 @@
                 <value>http</value>
                 <value>https</value>
 
+                <value>Abcam</value>
                 <value>AddexBio</value>
                 <value>BEI_Resources</value>
                 <value>CCLE</value>
@@ -55,6 +56,7 @@
                 <value>FCDI</value>
                 <value>FCS-free</value>
                 <value>FlyBase</value>
+                <value>FlyBase_Cell_line</value>
                 <value>HIVReagentProgram</value>
                 <value>IARC_TP53</value>
                 <value>IBRC</value>
@@ -72,6 +74,7 @@
                 <value>NHCDR</value>
                 <value>NIH-ARP</value>
                 <value>NISES</value>
+                <value>NRFC</value>
                 <value>RSCB</value>
                 <value>SKY/M-FISH/CGH</value>
                 <value>TKG</value>
@@ -146,6 +149,7 @@
                 <entry key="Horizon_Discovery" value="132"/>
                 <entry key="PerkinElmer" value="133"/>
                 <entry key="SLKBase" value="134"/>
+                <entry key="EGA" value="135"/>
             </map>
         </property>
     </bean>
