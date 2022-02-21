@@ -5,7 +5,8 @@ import edu.mcw.rgd.datamodel.*;
 import edu.mcw.rgd.datamodel.ontology.Annotation;
 import edu.mcw.rgd.datamodel.ontologyx.Term;
 import edu.mcw.rgd.datamodel.ontologyx.TermSynonym;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class Dao {
 
     public void insertCellLines( Collection<CellLine> cellLines ) throws Exception {
 
-        Logger log = Logger.getLogger("insertedCellLines");
+        Logger log = LogManager.getLogger("inserted_cell_lines");
 
         for( CellLine cl: cellLines ) {
 
@@ -50,7 +51,7 @@ public class Dao {
 
     public void deleteCellLines( Collection<CellLine> cellLines ) throws Exception {
 
-        Logger log = Logger.getLogger("discontinuedCellLines");
+        Logger log = LogManager.getLogger("discontinued_cell_lines");
 
         for( CellLine cl: cellLines ) {
             log.debug(cl.dump("|"));
@@ -62,7 +63,7 @@ public class Dao {
 
     public void updateRgdId( int rgdId, int objectKey, int speciesTypeKey, String objectStatus ) throws Exception {
 
-        Logger log = Logger.getLogger("updatedRgdIds");
+        Logger log = LogManager.getLogger("updated_rgd_ids");
 
         RgdId id = rgdIdDAO.getRgdId2(rgdId);
         log.debug("OLD> RGD:"+rgdId+", OBJECT_KEY="+id.getObjectKey()+", SPECIES_TYPE_KEY="+id.getSpeciesTypeKey()+", OBJECT_STATUS="+id.getObjectStatus());
@@ -79,7 +80,7 @@ public class Dao {
 
     public void updateCellLine( CellLine oldCellLine, CellLine newCellLine ) throws Exception {
 
-        Logger log = Logger.getLogger("updatedCellLines");
+        Logger log = LogManager.getLogger("updated_cell_lines");
 
         log.debug("OLD> "+oldCellLine.dump("|"));
         log.debug("NEW> "+newCellLine.dump("|"));
@@ -100,7 +101,7 @@ public class Dao {
 
     public void insertAliases(Collection<Alias> aliasesForInsert) throws Exception {
 
-        Logger log = Logger.getLogger("aliases");
+        Logger log = LogManager.getLogger("aliases");
         for( Alias a: aliasesForInsert ) {
             log.debug("INSERT "+a.dump("|"));
         }
@@ -119,13 +120,13 @@ public class Dao {
         }
 
         if( genes.isEmpty() ) {
-            Logger log = Logger.getLogger("status");
+            Logger log = LogManager.getLogger("status");
             if( doWarn ) {
                 log.warn("cannot resolve " + accId);
             }
             return 0;
         } else if( genes.size()>1 ) {
-            Logger log = Logger.getLogger("status");
+            Logger log = LogManager.getLogger("status");
             if( doWarn ) {
                 log.warn("multiple genes for " + accId);
             }
@@ -142,13 +143,13 @@ public class Dao {
 
     public int insertAssociation( Association assoc ) throws Exception {
         int r = assocDAO.insertAssociation(assoc);
-        Logger log = Logger.getLogger("insertedAssociations");
+        Logger log = LogManager.getLogger("inserted_associations");
         log.debug(assoc.dump("|"));
         return r;
     }
 
     public int deleteAssociation( Association assoc ) throws Exception {
-        Logger log = Logger.getLogger("deletedAssociations");
+        Logger log = LogManager.getLogger("deleted_associations");
         log.debug(assoc.dump("|"));
         return assocDAO.deleteAssociationByKey(assoc.getAssocKey());
     }
@@ -167,7 +168,7 @@ public class Dao {
     }
 
     public int insertXdbIds(Collection<XdbId> xdbs) throws Exception {
-        Logger log = Logger.getLogger("insertedXdbIds");
+        Logger log = LogManager.getLogger("inserted_xdb_ids");
         for( XdbId id: xdbs ) {
             log.debug(id.dump("|"));
         }
@@ -175,7 +176,7 @@ public class Dao {
     }
 
     public int deleteXdbIds(Collection<XdbId> xdbs) throws Exception {
-        Logger log = Logger.getLogger("deletedXdbIds");
+        Logger log = LogManager.getLogger("deleted_xdb_ids");
         for( XdbId id: xdbs ) {
             log.debug(id.dump("|"));
         }
@@ -220,7 +221,7 @@ public class Dao {
     }
 
     public int insertAnnotation(Annotation a) throws Exception {
-        Logger log = Logger.getLogger("annotInserted");
+        Logger log = LogManager.getLogger("annot_inserted");
         int key = adao.insertAnnotation(a);
         log.debug(a.dump("|"));
         return key;
@@ -228,7 +229,7 @@ public class Dao {
 
     public void updateAnnotation(Annotation newAnnot, Annotation oldAnnot) throws Exception {
 
-        Logger log = Logger.getLogger("annotUpdated");
+        Logger log = LogManager.getLogger("annot_updated");
         log.debug("OLD_ANNOT: "+oldAnnot.dump("|"));
         log.debug("NEW_ANNOT: "+newAnnot.dump("|"));
 
@@ -243,7 +244,7 @@ public class Dao {
     public int deleteAnnotations(List<Annotation> staleAnnots, int staleAnnotThreshold) throws Exception {
 
         // get to-be-deleted stale annots and check if their nr does not exceed the threshold
-        Logger log = Logger.getLogger("annotDeleted");
+        Logger log = LogManager.getLogger("annot_deleted");
         if( staleAnnots.size() > staleAnnotThreshold ) {
             for( Annotation annot: staleAnnots ) {
                 log.debug("TO-BE-DELETED "+annot.dump("|"));

@@ -4,7 +4,8 @@ import edu.mcw.rgd.datamodel.RgdId;
 import edu.mcw.rgd.datamodel.XdbId;
 import edu.mcw.rgd.datamodel.ontology.Annotation;
 import edu.mcw.rgd.process.Utils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -18,7 +19,7 @@ public class Annotator {
     private String sourcePipeline;
     private String staleAnnotThreshold;
 
-    Logger log = Logger.getLogger("annot");
+    Logger log = LogManager.getLogger("annot");
     Dao dao = new Dao();
     Date dtStart;
     AnnotCache annotCache = new AnnotCache();

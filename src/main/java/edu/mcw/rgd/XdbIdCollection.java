@@ -1,9 +1,9 @@
 package edu.mcw.rgd;
 
-import edu.mcw.rgd.datamodel.Alias;
 import edu.mcw.rgd.datamodel.XdbId;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -31,7 +31,7 @@ public class XdbIdCollection {
     // THREAD SAFE SINGLETON -- end
 
 
-    Logger log = Logger.getLogger("status");
+    Logger log = LogManager.getLogger("status");
 
     private final Set<XdbId> incoming = new HashSet<>();
 

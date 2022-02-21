@@ -1,3 +1,6 @@
+Feb 21, 2022
+  updated log4j to avoid zero day exploit
+
 Oct 13, 2021
   parser: added support fro XDB_ID 'SLKBase'; added patch for some malformed ORDO ids
   

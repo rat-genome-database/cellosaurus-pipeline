@@ -2,7 +2,8 @@ package edu.mcw.rgd;
 
 import edu.mcw.rgd.datamodel.Association;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +34,7 @@ public class AssociationCollection {
     // THREAD SAFE SINGLETON -- end
 
 
-    Logger log = Logger.getLogger("status");
+    Logger log = LogManager.getLogger("status");
 
     private final Map<String, Association> incoming = new ConcurrentHashMap<>();
     private final Map<String, Object> assocTypes = new ConcurrentHashMap<>();

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <!-- <PatternLayout pattern="%d{HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"/> -->
+            <PatternLayout pattern="[%d{yyyy-MM-hh HH:mm:ss}] %msg%n"/>
+        </Console>
+
+        <RollingFile name="status" append="true" fileName="logs/status.log" filePattern="logs/status.log.%d{yyyy-MM}">
+            <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+        <File name="summary" append="false" fileName="logs/summary.log">
+            <PatternLayout pattern="%m%n"/>
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+        </File>
+        <RollingFile name="detail" append="true" fileName="logs/detail.log" filePattern="logs/detail.log.%d{yyyy-MM}">
+            <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="annot" append="true" fileName="logs/annot.log" filePattern="logs/annot.log.%d{yyyy-MM}">
+            <PatternLayout pattern="[%d] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+        <File name="annot_summary" append="false" fileName="logs/annotSummary.log">
+            <PatternLayout pattern="%m%n"/>
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+        </File>
+
+
+        <RollingFile name="annot_inserted" append="true" fileName="logs/annot_inserted.log" filePattern="logs/annot_inserted.log.%d{yyyy-MM}">
+            <PatternLayout pattern="[%d] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="annot_updated" append="true" fileName="logs/annot_updated.log" filePattern="logs/annot_updated.log.%d{yyyy-MM}">
+            <PatternLayout pattern="[%d] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="annot_deleted" append="true" fileName="logs/annot_deleted.log" filePattern="logs/annot_deleted.log.%d{yyyy-MM}">
+            <PatternLayout pattern="[%d] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="inserted_cell_lines" append="true" fileName="logs/inserted_cell_lines.log" filePattern="logs/inserted_cell_lines.log.%d{yyyy-MM}">
+            <PatternLayout pattern="[%d] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="discontinued_cell_lines" append="true" fileName="logs/discontinued_cell_lines.log" filePattern="logs/discontinued_cell_lines.log.%d{yyyy-MM}">
+            <PatternLayout pattern="[%d] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="updated_cell_lines" append="true" fileName="logs/updated_cell_lines.log" filePattern="logs/updated_cell_lines.log.%d{yyyy-MM}">
+            <PatternLayout pattern="[%d] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="updated_rgd_ids" append="true" fileName="logs/updated_rgd_ids.log" filePattern="logs/updated_rgd_ids.log.%d{yyyy-MM}">
+            <PatternLayout pattern="[%d] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="aliases" append="true" fileName="logs/aliases.log" filePattern="logs/aliases.log.%d{yyyy-MM}">
+            <PatternLayout pattern="[%d] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="inserted_associations" append="true" fileName="logs/inserted_associations.log" filePattern="logs/inserted_associations.log.%d{yyyy-MM}">
+            <PatternLayout pattern="[%d] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="deleted_associations" append="true" fileName="logs/deleted_associations.log" filePattern="logs/deleted_associations.log.%d{yyyy-MM}">
+            <PatternLayout pattern="[%d] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="inserted_xdb_ids" append="true" fileName="logs/inserted_xdb_ids.log" filePattern="logs/inserted_xdb_ids.log.%d{yyyy-MM}">
+            <PatternLayout pattern="[%d] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="deleted_xdb_ids" append="true" fileName="logs/deleted_xdb_ids.log" filePattern="logs/deleted_xdb_ids.log.%d{yyyy-MM}">
+            <PatternLayout pattern="[%d] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+        </Root>
+        <!-- daily -->
+        <Logger name="summary" level="debug" additivity="false">
+            <AppenderRef ref="status" level="info"/>
+            <AppenderRef ref="summary" level="info"/><!-- human readable -->
+            <AppenderRef ref="detail"/>
+            <AppenderRef ref="Console" level="info"/>
+        </Logger>
+
+        <Logger name="annot" level="debug" additivity="false">
+            <AppenderRef ref="annot"/>
+            <AppenderRef ref="annot_summary" level="info"/>
+            <AppenderRef ref="Console" level="info"/>
+        </Logger>
+
+        <!-- monthly -->
+
+        <Logger name="annot_inserted" level="debug" additivity="false">
+            <AppenderRef ref="annot_inserted"/>
+            <AppenderRef ref="Console" level="info"/>
+        </Logger>
+        <Logger name="annot_updated" level="debug" additivity="false">
+            <AppenderRef ref="annot_updated"/>
+            <AppenderRef ref="Console" level="info"/>
+        </Logger>
+        <Logger name="annot_deleted" level="debug" additivity="false">
+            <AppenderRef ref="annot_deleted"/>
+            <AppenderRef ref="Console" level="info"/>
+        </Logger>
+
+        <Logger name="inserted_cell_lines" level="debug" additivity="false">
+            <AppenderRef ref="inserted_cell_lines"/>
+            <AppenderRef ref="Console" level="info"/>
+        </Logger>
+        <Logger name="discontinued_cell_lines" level="debug" additivity="false">
+            <AppenderRef ref="discontinued_cell_lines"/>
+            <AppenderRef ref="Console" level="info"/>
+        </Logger>
+        <Logger name="updated_cell_lines" level="debug" additivity="false">
+            <AppenderRef ref="updated_cell_lines"/>
+            <AppenderRef ref="Console" level="info"/>
+        </Logger>
+
+        <Logger name="updated_rgd_ids" level="debug" additivity="false">
+            <AppenderRef ref="updated_rgd_ids"/>
+            <AppenderRef ref="Console" level="info"/>
+        </Logger>
+        <Logger name="aliases" level="debug" additivity="false">
+            <AppenderRef ref="aliases"/>
+            <AppenderRef ref="Console" level="info"/>
+        </Logger>
+
+        <Logger name="inserted_associations" level="debug" additivity="false">
+            <AppenderRef ref="inserted_associations"/>
+            <AppenderRef ref="Console" level="info"/>
+        </Logger>
+        <Logger name="deleted_associations" level="debug" additivity="false">
+            <AppenderRef ref="deleted_associations"/>
+            <AppenderRef ref="Console" level="info"/>
+        </Logger>
+
+        <Logger name="inserted_xdb_ids" level="debug" additivity="false">
+            <AppenderRef ref="inserted_xdb_ids"/>
+            <AppenderRef ref="Console" level="info"/>
+        </Logger>
+        <Logger name="deleted_xdb_ids" level="debug" additivity="false">
+            <AppenderRef ref="deleted_xdb_ids"/>
+            <AppenderRef ref="Console" level="info"/>
+        </Logger>
+    </Loggers>
+</Configuration>
