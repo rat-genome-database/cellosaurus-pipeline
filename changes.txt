@@ -1,3 +1,6 @@
+Apr 06, 2022
+  added handling of xdb ids: (Rockland, Innoprot)
+
 Feb 21, 2022
   updated log4j to avoid zero day exploit
   fixed parser; added handling of xdb ids: (ignored: FlyBase_Cell_line, Abcam, NRFC; added: EGA)
