@@ -152,6 +152,8 @@
                 <entry key="EGA" value="135"/>
                 <entry key="Rockland" value="136"/>
                 <entry key="Innoprot" value="137"/>
+                <entry key="DSMZCellDive" value="143"/>
+                <entry key="CancerTools" value="144"/>
             </map>
         </property>
     </bean>
