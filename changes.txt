@@ -1,3 +1,6 @@
+Jun 27, 2022
+  renamed distro to 'cellosaurus-pipeline' (was 'CellosaurusPipeline')
+
 Apr 06, 2022
   added handling of xdb ids: (Rockland, Innoprot)
 

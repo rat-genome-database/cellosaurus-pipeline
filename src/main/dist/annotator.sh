@@ -3,7 +3,7 @@
 # Cellosaurus disease annotation pipeline
 #
 . /etc/profile
-APPNAME=CellosaurusPipeline
+APPNAME="cellosaurus-pipeline"
 SERVER=`hostname -s | tr '[a-z]' '[A-Z]'`
 
 APPDIR=/home/rgddata/pipelines/$APPNAME
