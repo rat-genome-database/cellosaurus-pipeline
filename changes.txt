@@ -1,3 +1,6 @@
+Sep 13, 2022
+  no longer report synonym conflicts for synonyms shorter than 4 characters
+
 Jun 27, 2022
   renamed distro to 'cellosaurus-pipeline' (was 'CellosaurusPipeline')
   parser: added support for XDB IDS: 'DSMZCellDive' and 'CancerTools'

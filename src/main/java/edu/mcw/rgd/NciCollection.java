@@ -129,17 +129,18 @@ public class NciCollection {
         List<TermSynonym> synonyms = dao.getActiveSynonymsByType("RDO", "exact_synonym");
         for( TermSynonym ts: synonyms ) {
             String normalizedName = normalizeName(ts.getName());
-
-            String previousAcc = result.put(normalizedName, ts.getTermAcc());
-            if( previousAcc!=null && !previousAcc.equals(ts.getTermAcc())) {
-                log.info("synonym conflict: "+ts.getName()+" "+previousAcc+" "+ts.getTermAcc());
+            if( normalizedName.length()>0 ) {
+                String previousAcc = result.put(normalizedName, ts.getTermAcc());
+                if (previousAcc != null && !previousAcc.equals(ts.getTermAcc())) {
+                    log.info("synonym conflict: " + ts.getName() + " " + previousAcc + " " + ts.getTermAcc());
+                }
             }
         }
         return result;
     }
 
     String normalizeName(String synonym) {
-        if( synonym==null )
+        if( synonym==null || synonym.length()<=3 )
             return "";
         String processedName = synonym.toLowerCase();
 
