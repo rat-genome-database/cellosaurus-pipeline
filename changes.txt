@@ -1,3 +1,6 @@
+Oct 07, 2022
+  parser: added 'ICLDB' to list of ignored XDB IDS
+
 Sep 13, 2022
   no longer report synonym conflicts for synonyms shorter than 4 characters
 

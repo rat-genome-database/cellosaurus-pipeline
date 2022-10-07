@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="main" class="edu.mcw.rgd.Main">
-        <property name="version" value="Cellosaurus pipeline -- build Sep 13, 2022" />
+        <property name="version" value="Cellosaurus pipeline -- build Oct 07, 2022" />
         <property name="sourcePipeline" value="CELLOSAURUS" />
         <property name="oboFile" value="ftp://ftp.expasy.org/databases/cellosaurus/cellosaurus.obo"/>
         <property name="parser" ref="parser"/>
@@ -60,6 +60,7 @@
                 <value>HIVReagentProgram</value>
                 <value>IARC_TP53</value>
                 <value>IBRC</value>
+                <value>ICLDB</value>
                 <value>Imanis</value>
                 <value>ISCR</value>
                 <value>IZSLER</value>
