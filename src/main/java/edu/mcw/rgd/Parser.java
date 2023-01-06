@@ -76,8 +76,8 @@ public class Parser {
                 rec.getXdbIds().add(xdbId);
             }
             // name: CellLine name
-            else if( line.startsWith("name: ") ) {
-                rec.setName( line.substring(6).trim() );
+            else if( line.startsWith("name:") ) {
+                rec.setName( line.substring(5).trim() );
             }
             // subset: CellLine Gender or Type
             else if( line.startsWith("subset: ") ) {
@@ -279,13 +279,15 @@ public class Parser {
                   || pair.startsWith("Contains 11 integrated HTLV-1 proviruses: ")
                   || pair.startsWith("Monoclonal antibody isotype: ")
                   || pair.startsWith("Monoclonal antibody target: ")
-                  || pair.startsWith("The resulting cell line expresses two ligA variants: ") ) {
+                  || pair.startsWith("The resulting cell line expresses two ligA variants: ")
+                  || pair.startsWith("Virology: ") ) {
                 // CELL_LINES.CHARACTERISTICS
                 rec.setCharacteristics(merge(rec.getCharacteristics(), pair));
             }
             else if( pair.startsWith("Breed/subspecies: ")
                   || pair.startsWith("Derived from metastatic site: ")
                   || pair.startsWith("Derived from sampling site: ")
+                  || pair.startsWith("Donor information: ")
                   || pair.startsWith("Population: ")
                   || pair.startsWith("Karyotypic information: ")
                   || pair.startsWith("Selected for resistance to: ")
@@ -298,7 +300,8 @@ public class Parser {
                 rec.setAvailability(merge(rec.getAvailability(), pair));
             }
             else if( pair.startsWith("Doubling time: ")
-                  || pair.startsWith("Microsatellite instability: ") ) {
+                  || pair.startsWith("Microsatellite instability: ")
+                  || pair.startsWith("Senescence: ") ) {
                 // CELL_LINES.PHENOTYPE
                 rec.setPhenotype(merge(rec.getPhenotype(), pair));
             }

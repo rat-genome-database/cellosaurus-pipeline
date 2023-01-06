@@ -52,6 +52,7 @@
                 <value>CLDB</value>
                 <value>CLS</value>
                 <value>ColonAtlas</value>
+                <value>dbGAP</value>
                 <value>dbMHC</value>
                 <value>FCDI</value>
                 <value>FCS-free</value>
@@ -76,6 +77,7 @@
                 <value>NIH-ARP</value>
                 <value>NISES</value>
                 <value>NRFC</value>
+                <value>PubChem_Cell_line</value>
                 <value>RSCB</value>
                 <value>SKY/M-FISH/CGH</value>
                 <value>TKG</value>
