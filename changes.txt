@@ -1,3 +1,6 @@
+Jan 24, 2023
+  updated build.gradle to be gradle 6.x + compatible
+
 Jan 06, 2023
   parser: added 'dbGAP','PubChem_Cell_line' to list of ignored XDB IDS
           added handling of comment tags: 'Virology:', 'Senescence', 'Donor information:'
