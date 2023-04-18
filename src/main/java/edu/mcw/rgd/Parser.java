@@ -374,7 +374,10 @@ public class Parser {
             comment = comment.substring(1, comment.length()-1);
         }
 
-        String[] pairs = comment.split("\\. ");
+        // special substitutions:
+        String comment2 = comment.replace("Galan J.", "Galan J");
+
+        String[] pairs = comment2.split("\\. ");
         List<String> result = new ArrayList<>();
         for( String pair: pairs ) {
             if( pair.contains(": ") ) {

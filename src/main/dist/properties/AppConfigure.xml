@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="main" class="edu.mcw.rgd.Main">
-        <property name="version" value="Cellosaurus pipeline -- build Jan 24, 2023" />
+        <property name="version" value="Cellosaurus pipeline -- build Apr 18, 2023" />
         <property name="sourcePipeline" value="CELLOSAURUS" />
         <property name="oboFile" value="ftp://ftp.expasy.org/databases/cellosaurus/cellosaurus.obo"/>
         <property name="parser" ref="parser"/>
@@ -75,6 +75,7 @@
                 <value>NCI-DTP</value>
                 <value>NHCDR</value>
                 <value>NIH-ARP</value>
+                <value>NIHhESC</value>
                 <value>NISES</value>
                 <value>NRFC</value>
                 <value>PubChem_Cell_line</value>
