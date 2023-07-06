@@ -1,3 +1,6 @@
+Jul 06, 2023
+  parser: fixed handling of some comments
+
 Apr 18, 2023
   parser: added 'NIHhESC' to list of ignored XDB IDS
   parser: fixed handling of some comments

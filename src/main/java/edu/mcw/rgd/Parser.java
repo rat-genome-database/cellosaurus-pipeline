@@ -285,8 +285,10 @@ public class Parser {
                 rec.setCharacteristics(merge(rec.getCharacteristics(), pair));
             }
             else if( pair.startsWith("Breed/subspecies: ")
+                  || pair.startsWith("Cell type: ")
                   || pair.startsWith("Derived from metastatic site: ")
                   || pair.startsWith("Derived from sampling site: ")
+                  || pair.startsWith("Derived from site: ")
                   || pair.startsWith("Donor information: ")
                   || pair.startsWith("Population: ")
                   || pair.startsWith("Karyotypic information: ")
