@@ -1,3 +1,7 @@
+Jul 10, 2023
+  config: changed source from ftp://ftp.expasy.org/databases/cellosaurus/cellosaurus.obo
+    to https://ftp.expasy.org/databases/cellosaurus/cellosaurus.obo
+
 Jul 06, 2023
   parser: fixed handling of some comments
 

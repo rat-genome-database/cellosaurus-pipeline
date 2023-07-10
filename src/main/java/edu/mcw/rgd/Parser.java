@@ -103,11 +103,6 @@ public class Parser {
             else if( line.startsWith("relationship: ") ) {
                 parseRelationship( line.substring(14).trim(), rec );
             }
-            else {
-                if( rec!=null ) {
-                    throw new Exception("todo: implement parsing for line " + line);
-                }
-            }
         }
         in.close();
 
@@ -438,7 +433,7 @@ public class Parser {
         rec.getAliases().add(alias);
     }
 
-    public void setSexTypes(Map sexTypes) {
+    public void setSexTypes(Map<String,String>  sexTypes) {
         this.sexTypes = sexTypes;
     }
 
@@ -446,7 +441,7 @@ public class Parser {
         return sexTypes;
     }
 
-    public void setCellLineTypes(Map cellLineTypes) {
+    public void setCellLineTypes(Map<String,String> cellLineTypes) {
         this.cellLineTypes = cellLineTypes;
     }
 
@@ -454,11 +449,11 @@ public class Parser {
         return cellLineTypes;
     }
 
-    public void setIgnoredXrefDatabases(Set ignoredXrefDatabases) {
+    public void setIgnoredXrefDatabases(Set<String> ignoredXrefDatabases) {
         this.ignoredXrefDatabases = ignoredXrefDatabases;
     }
 
-    public Set getIgnoredXrefDatabases() {
+    public Set<String> getIgnoredXrefDatabases() {
         return ignoredXrefDatabases;
     }
 
