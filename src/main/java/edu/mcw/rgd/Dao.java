@@ -26,7 +26,6 @@ public class Dao {
     RGDManagementDAO rgdIdDAO = new RGDManagementDAO();
     XdbIdDAO xdao = new XdbIdDAO();
 
-    Logger logStatus = LogManager.getLogger("status");
     Logger logWarnings = LogManager.getLogger("warnings");
 
     public String getConnectionInfo() {
