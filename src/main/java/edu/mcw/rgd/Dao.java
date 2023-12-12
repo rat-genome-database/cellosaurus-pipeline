@@ -124,12 +124,12 @@ public class Dao {
 
         if( genes.isEmpty() ) {
             if( doWarn ) {
-                logWarnings.info("cannot resolve " + accId);
+                logWarnings.debug("cannot resolve " + accId);
             }
             return 0;
         } else if( genes.size()>1 ) {
             if( doWarn ) {
-                logStatus.warn("multiple genes for " + accId);
+                logWarnings.warn("multiple genes for " + accId);
             }
             return 0;
         }
