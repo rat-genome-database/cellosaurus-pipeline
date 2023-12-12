@@ -26,6 +26,9 @@ public class Dao {
     RGDManagementDAO rgdIdDAO = new RGDManagementDAO();
     XdbIdDAO xdao = new XdbIdDAO();
 
+    Logger logStatus = LogManager.getLogger("status");
+    Logger logWarnings = LogManager.getLogger("warnings");
+
     public String getConnectionInfo() {
         return cellLineDAO.getConnectionInfo();
     }
@@ -120,15 +123,13 @@ public class Dao {
         }
 
         if( genes.isEmpty() ) {
-            Logger log = LogManager.getLogger("status");
             if( doWarn ) {
-                log.warn("cannot resolve " + accId);
+                logWarnings.info("cannot resolve " + accId);
             }
             return 0;
         } else if( genes.size()>1 ) {
-            Logger log = LogManager.getLogger("status");
             if( doWarn ) {
-                log.warn("multiple genes for " + accId);
+                logStatus.warn("multiple genes for " + accId);
             }
             return 0;
         }
