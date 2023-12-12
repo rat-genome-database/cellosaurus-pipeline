@@ -16,6 +16,8 @@ import java.util.*;
  */
 public class NciCollection {
 
+    Logger logWarnings = LogManager.getLogger("warnings");
+
     // THREAD SAFE SINGLETON -- start
     // private instance, so that it can be accessed by only by getInstance() method
     private static NciCollection instance;
@@ -117,7 +119,7 @@ public class NciCollection {
             String normalizedName = normalizeName(t.getTerm());
             String previousAcc = result.put(normalizedName, t.getAccId());
             if( previousAcc!=null && !previousAcc.equals(t.getAccId())) {
-                log.info("name conflict: "+t.getTerm()+" "+previousAcc+" "+t.getAccId());
+                logWarnings.debug("name conflict: "+t.getTerm()+" "+previousAcc+" "+t.getAccId());
             }
         }
         return result;
@@ -132,7 +134,7 @@ public class NciCollection {
             if( normalizedName.length()>0 ) {
                 String previousAcc = result.put(normalizedName, ts.getTermAcc());
                 if (previousAcc != null && !previousAcc.equals(ts.getTermAcc())) {
-                    log.info("synonym conflict: " + ts.getName() + " " + previousAcc + " " + ts.getTermAcc());
+                    logWarnings.debug("synonym conflict: " + ts.getName() + " " + previousAcc + " " + ts.getTermAcc());
                 }
             }
         }

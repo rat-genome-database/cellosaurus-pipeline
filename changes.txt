@@ -1,3 +1,6 @@
+Dec 12, 2023
+  moved spam-like alerts into 'warnings' log
+
 Oct 18, 2023
   added handling of xrefs: 'cancercelllines', 'GeneCopoeia', 'Ubigene'
 
