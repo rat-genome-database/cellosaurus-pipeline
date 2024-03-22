@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="main" class="edu.mcw.rgd.Main">
-        <property name="version" value="Cellosaurus pipeline -- build Dec 12, 2023" />
+        <property name="version" value="Cellosaurus pipeline -- build Mar 22, 2024" />
         <property name="sourcePipeline" value="CELLOSAURUS" />
         <property name="oboFile" value="https://ftp.expasy.org/databases/cellosaurus/cellosaurus.obo"/>
         <property name="parser" ref="parser"/>
@@ -161,6 +161,8 @@
                 <entry key="cancercelllines" value="149"/>
                 <entry key="GeneCopoeia" value="150"/>
                 <entry key="Ubigene" value="151"/>
+                <entry key="BioGRID_ORCS_Cell_line" value="152"/>
+                <entry key="DSHB" value="153"/>
             </map>
         </property>
     </bean>
