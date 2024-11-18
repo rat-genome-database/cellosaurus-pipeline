@@ -66,12 +66,14 @@ public class Parser {
             }
             // id: => CellLine symbol
             else if( line.startsWith("id: ") ) {
-                rec.setSymbol( line.substring(4).trim() );
+                String accession = line.substring(4).trim();
+                rec.setSymbol( accession );
+                rec.setCitationId("RRID:"+accession);
 
                 // use cell line symbol to create an xdb id to Cellosaurus
                 XdbId xdbId = new XdbId();
                 xdbId.setXdbKey(128); // Cellosaurus
-                xdbId.setAccId(rec.getSymbol());
+                xdbId.setAccId(accession);
                 xdbId.setSrcPipeline(srcPipeline);
                 rec.getXdbIds().add(xdbId);
             }
@@ -332,6 +334,7 @@ public class Parser {
                 rec.setNotes(merge(rec.getNotes(), pair));
             }
             else if( pair.startsWith("Sequence variation: ")
+                  || pair.startsWith("Genetic integration: ")
                   || pair.startsWith("Knockout cell: ")
                   || pair.startsWith("Transfected with: ") ) {
                 // GENOMIC_ELEMENTS.GENOMIC_ALTERATION
@@ -373,6 +376,7 @@ public class Parser {
 
         // special substitutions:
         String comment2 = comment.replace("Galan J.", "Galan J");
+        comment2 = comment2.replace("Galan, Jorge E. we we", "Galan, Jorge E we were");
 
         String[] pairs = comment2.split("\\. ");
         List<String> result = new ArrayList<>();

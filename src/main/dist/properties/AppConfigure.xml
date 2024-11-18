@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="main" class="edu.mcw.rgd.Main">
-        <property name="version" value="Cellosaurus pipeline -- build Mar 22, 2024" />
+        <property name="version" value="Cellosaurus pipeline -- build Nov 18, 2024" />
         <property name="sourcePipeline" value="CELLOSAURUS" />
         <property name="oboFile" value="https://ftp.expasy.org/databases/cellosaurus/cellosaurus.obo"/>
         <property name="parser" ref="parser"/>
@@ -59,6 +59,7 @@
                 <value>FlyBase</value>
                 <value>FlyBase_Cell_line</value>
                 <value>HIVReagentProgram</value>
+                <value>Hysigen</value>
                 <value>IARC_TP53</value>
                 <value>IBRC</value>
                 <value>ICLDB</value>
@@ -163,6 +164,10 @@
                 <entry key="Ubigene" value="151"/>
                 <entry key="BioGRID_ORCS_Cell_line" value="152"/>
                 <entry key="DSHB" value="153"/>
+                <entry key="Sigma-Aldrich" value="154"/>
+                <entry key="Abeomics" value="155"/>
+                <entry key="RIKEN_BRC_EPD" value="156"/>
+                <entry key="Genomeditech" value="157"/>
             </map>
         </property>
     </bean>
