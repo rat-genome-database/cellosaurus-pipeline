@@ -376,7 +376,10 @@ public class Parser {
 
         // special substitutions:
         String comment2 = comment.replace("Galan J.", "Galan J");
-        comment2 = comment2.replace("Galan, Jorge E. we we", "Galan, Jorge E we were");
+        comment2 = comment2
+            .replace("Galan, Jorge E. we we", "Galan, Jorge E we were")
+            .replace("Miscellaneous: STR profile carried out by CLS and provided by Schrock, Morgan S. ",
+            "Miscellaneous: STR profile carried out by CLS and provided by Schrock, Morgan S; ");
 
         String[] pairs = comment2.split("\\. ");
         List<String> result = new ArrayList<>();
