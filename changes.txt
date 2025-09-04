@@ -1,3 +1,6 @@
+Sep 04, 2025
+  added handling of xrefs: Revvity/PerkinElmer
+
 Jun 30, 2025
   added handling of xrefs: Evercyte, InvivoGen, FANTOM5_SSTAR, GenScript
 

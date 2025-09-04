@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="main" class="edu.mcw.rgd.Main">
-        <property name="version" value="Cellosaurus pipeline -- build Jun 30, 2025" />
+        <property name="version" value="Cellosaurus pipeline -- build Sep 04, 2025" />
         <property name="sourcePipeline" value="CELLOSAURUS" />
         <property name="oboFile" value="https://ftp.expasy.org/databases/cellosaurus/cellosaurus.obo"/>
         <property name="parser" ref="parser"/>
@@ -172,6 +172,7 @@
                 <entry key="FANTOM5_SSTAR" value="162"/>
                 <entry key="InvivoGen" value="163"/>
                 <entry key="Evercyte" value="164"/>
+                <entry key="Revvity/PerkinElmer" value="165"/>
             </map>
         </property>
     </bean>

@@ -379,7 +379,9 @@ public class Parser {
         comment2 = comment2
             .replace("Galan, Jorge E. we we", "Galan, Jorge E we were")
             .replace("Miscellaneous: STR profile carried out by CLS and provided by Schrock, Morgan S. ",
-            "Miscellaneous: STR profile carried out by CLS and provided by Schrock, Morgan S; ");
+            "Miscellaneous: STR profile carried out by CLS and provided by Schrock, Morgan S; ")
+            .replace("It is: CSF1PO=10,13; D13S317=11; D16S539=12; D18S51=16,18; D21S11=30,31; D3S1358=15; D5S818=11; D7S820=8; D8S1179=12,13; FGA=18,26; TH01=6,10; TPOX=8; vWA=17,18",
+                    "It is CSF1PO=10,13, D13S317=11, D16S539=12, D18S51=16,18, D21S11=30,31, D3S1358=15, D5S818=11, D7S820=8, D8S1179=12,13, FGA=18,26, TH01=6,10, TPOX=8, vWA=17,18");
 
         String[] pairs = comment2.split("\\. ");
         List<String> result = new ArrayList<>();
