@@ -114,7 +114,7 @@ public class AnnotCache {
                 annotsForUpdate.put(annot.getKey(), aForUpdate);
             } else {
                 // we already have an annotation for update:
-                a.setRelativeTo(merge(a.getRelativeTo(), annot.getRelativeTo()));
+                //a.setRelativeTo(merge(a.getRelativeTo(), annot.getRelativeTo()));
                 a.setNotes(merge(a.getNotes(), annot.getNotes()));
             }
         }

@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="main" class="edu.mcw.rgd.Main">
-        <property name="version" value="Cellosaurus pipeline -- build Sep 04, 2025" />
+        <property name="version" value="Cellosaurus pipeline -- build Dec 05, 2025" />
         <property name="sourcePipeline" value="CELLOSAURUS" />
         <property name="oboFile" value="https://ftp.expasy.org/databases/cellosaurus/cellosaurus.obo"/>
         <property name="parser" ref="parser"/>
