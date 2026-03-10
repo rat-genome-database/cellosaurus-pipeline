@@ -1,3 +1,7 @@
+Mar 10, 2026
+  annotation unique key: added qualifier2 and associatedWith fields
+  updated dependencies
+
 Dec 05, 2025
   AnnotCache: removed references to field relative_to (field scheduled for obsoletion)
 
