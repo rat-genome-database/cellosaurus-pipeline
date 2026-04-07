@@ -7,19 +7,17 @@ import edu.mcw.rgd.process.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Annotator {
 
-    private String version;
     private int createdBy;
     private int refRgdId;
     private String evidenceCode;
     private String sourcePipeline;
     private String staleAnnotThreshold;
 
-    Logger log = LogManager.getLogger("annot");
+    private Logger log = LogManager.getLogger("annot");
     Dao dao = new Dao();
     Date dtStart;
     AnnotCache annotCache = new AnnotCache();
@@ -27,10 +25,6 @@ public class Annotator {
     public void run() throws Exception {
 
         dtStart = new Date();
-        log.info(getVersion());
-        log.info("   "+dao.getConnectionInfo());
-        SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        log.info("   started at "+sdt.format(dtStart));
 
         int inRgdAnnotCount = annotCache.loadAnnotations(dao, getRefRgdId());
         log.info(" in-rgd annotations preloaded: "+Utils.formatThousands(inRgdAnnotCount));
@@ -56,8 +50,6 @@ public class Annotator {
             staleAnnotThreshold = Integer.parseInt(getStaleAnnotThreshold().substring(0, getStaleAnnotThreshold().length()-1));
         }
         annotCache.deleteStaleAnnotations(dao, getRefRgdId(), staleAnnotThreshold, dtStart, log);
-
-        log.info("=== OK === elapsed "+Utils.formatElapsedTime(dtStart.getTime(), System.currentTimeMillis()));
     }
 
     List<Annotation> loadIncomingAnnots() throws Exception {
@@ -173,12 +165,12 @@ public class Annotator {
         return staleAnnotThreshold;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public Logger getLog() {
+        return log;
     }
 
-    public String getVersion() {
-        return version;
+    public void setLog(Logger log) {
+        this.log = log;
     }
 }
 

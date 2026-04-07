@@ -1,3 +1,7 @@
+Apr 07, 2026
+  added MemoryMonitor; consolidated boilerplate (version, timestamp, elapsed) into Main
+  removed version from Annotator; updated README; updated dependencies
+
 Mar 10, 2026
   annotation unique key: added qualifier2 and associatedWith fields
   updated dependencies

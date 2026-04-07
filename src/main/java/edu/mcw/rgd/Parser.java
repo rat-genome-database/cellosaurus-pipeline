@@ -33,9 +33,10 @@ public class Parser {
 
         List<DataRecord> dataRecords = new ArrayList<DataRecord>();
 
-        BufferedReader in = Utils.openReader(fileName);
         String line;
         DataRecord rec = null;
+        BufferedReader in = Utils.openReader(fileName);
+        try {
         while( (line=in.readLine())!=null ) {
 
             // detect record boundaries
@@ -106,7 +107,9 @@ public class Parser {
                 parseRelationship( line.substring(14).trim(), rec );
             }
         }
-        in.close();
+        } finally {
+            in.close();
+        }
 
         // add final data record to the list
         if( rec!=null ) {

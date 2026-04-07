@@ -6,6 +6,7 @@ import edu.mcw.rgd.datamodel.CellLine;
 import edu.mcw.rgd.datamodel.XdbId;
 import edu.mcw.rgd.process.CounterPool;
 import edu.mcw.rgd.process.FileDownloader;
+import edu.mcw.rgd.process.MemoryMonitor;
 import edu.mcw.rgd.process.Utils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -47,27 +48,40 @@ public class Main {
             }
         }
 
+        Logger activeLog = instance.log;
+        long time0 = System.currentTimeMillis();
+
+        MemoryMonitor memoryMonitor = new MemoryMonitor();
+        memoryMonitor.start();
+
         try {
+            Annotator annotator = null;
             if( runAnnotator ) {
-                Annotator annotator = (Annotator) (bf.getBean("annotator"));
+                annotator = (Annotator) (bf.getBean("annotator"));
+                activeLog = annotator.getLog();
+            }
+
+            activeLog.info(instance.getVersion());
+            activeLog.info("   "+instance.dao.getConnectionInfo());
+            SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            activeLog.info("   started at "+sdt.format(new Date(time0)));
+
+            if( runAnnotator ) {
                 annotator.run();
             } else {
                 instance.run();
             }
         }catch (Exception e) {
-            Utils.printStackTrace(e, instance.log);
+            Utils.printStackTrace(e, activeLog);
             throw e;
+        } finally {
+            memoryMonitor.stop();
+            activeLog.info(memoryMonitor.getSummary());
+            activeLog.info("=== OK === elapsed "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
         }
     }
 
     public void run() throws Exception {
-
-        long time0 = System.currentTimeMillis();
-
-        log.info(getVersion());
-        log.info("   "+dao.getConnectionInfo());
-        SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        log.info("   started at "+sdt.format(new Date(time0)));
 
         String localFile = downloadCellosaurusOboFile();
 
@@ -87,8 +101,6 @@ public class Main {
         NciCollection.getInstance().qc(dao, counters);
 
         log.info(counters.dumpAlphabetically());
-
-        log.info("OK -- time elapsed: "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
     }
 
     Map<String, CellLine> qcCellLines(List<DataRecord> incomingRecords, List<CellLine> inRgdRecords) throws Exception {

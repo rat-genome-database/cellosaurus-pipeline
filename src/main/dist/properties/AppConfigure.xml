@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="main" class="edu.mcw.rgd.Main">
-        <property name="version" value="Cellosaurus pipeline -- build Mar 10, 2026" />
+        <property name="version" value="cellosaurus-pipeline   -- build Apr 07, 2026" />
         <property name="sourcePipeline" value="CELLOSAURUS" />
         <property name="oboFile" value="https://ftp.expasy.org/databases/cellosaurus/cellosaurus.obo"/>
         <property name="parser" ref="parser"/>
@@ -178,7 +178,6 @@
     </bean>
 
     <bean id="annotator" class="edu.mcw.rgd.Annotator">
-        <property name="version" value="Cellosaurus Disease Annotation pipeline -- build Mar 10, 2026" />
         <property name="createdBy" value="73" />
         <property name="refRgdId" value="21410187" />
         <property name="evidenceCode" value="IEA" />
