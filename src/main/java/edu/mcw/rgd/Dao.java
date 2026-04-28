@@ -28,6 +28,15 @@ public class Dao {
 
     Logger logWarnings = LogManager.getLogger("warnings");
 
+    // dry-run mode: when true, all DB-mutating calls become no-ops and detail log lines are prefixed
+    private static boolean dryRun = false;
+    // synthetic negative rgd_ids handed out for inserts in dry-run mode so downstream code has something to attach to
+    private static int dryRunRgdIdCounter = -1;
+
+    public static boolean isDryRun() { return dryRun; }
+    public static void setDryRun(boolean v) { dryRun = v; }
+    private static String tag() { return dryRun ? "[DRY RUN] " : ""; }
+
     public String getConnectionInfo() {
         return cellLineDAO.getConnectionInfo();
     }
@@ -42,12 +51,16 @@ public class Dao {
 
         for( CellLine cl: cellLines ) {
 
-            RgdId id = rgdIdDAO.createRgdId(RgdId.OBJECT_KEY_CELL_LINES, "ACTIVE", cl.getSpeciesTypeKey());
-            cl.setRgdId(id.getRgdId());
+            if( dryRun ) {
+                // hand out a synthetic negative rgd_id so downstream (associations, xdb_ids) still has something to attach to
+                cl.setRgdId(dryRunRgdIdCounter--);
+            } else {
+                RgdId id = rgdIdDAO.createRgdId(RgdId.OBJECT_KEY_CELL_LINES, "ACTIVE", cl.getSpeciesTypeKey());
+                cl.setRgdId(id.getRgdId());
+                cellLineDAO.insertCellLine(cl);
+            }
 
-            cellLineDAO.insertCellLine(cl);
-
-            log.debug(cl.dump("|"));
+            log.debug(tag() + cl.dump("|"));
         }
     }
 
@@ -56,10 +69,12 @@ public class Dao {
         Logger log = LogManager.getLogger("discontinued_cell_lines");
 
         for( CellLine cl: cellLines ) {
-            log.debug(cl.dump("|"));
+            log.debug(tag() + cl.dump("|"));
 
-            // cell line, once created, should never be deleted; you can only withdraw it
-            rgdIdDAO.withdraw(cl);
+            if( !dryRun ) {
+                // cell line, once created, should never be deleted; you can only withdraw it
+                rgdIdDAO.withdraw(cl);
+            }
         }
     }
 
@@ -68,26 +83,30 @@ public class Dao {
         Logger log = LogManager.getLogger("updated_rgd_ids");
 
         RgdId id = rgdIdDAO.getRgdId2(rgdId);
-        log.debug("OLD> RGD:"+rgdId+", OBJECT_KEY="+id.getObjectKey()+", SPECIES_TYPE_KEY="+id.getSpeciesTypeKey()+", OBJECT_STATUS="+id.getObjectStatus());
+        log.debug(tag() + "OLD> RGD:"+rgdId+", OBJECT_KEY="+id.getObjectKey()+", SPECIES_TYPE_KEY="+id.getSpeciesTypeKey()+", OBJECT_STATUS="+id.getObjectStatus());
 
         id.setObjectKey(objectKey);
         id.setSpeciesTypeKey(speciesTypeKey);
         id.setObjectStatus(objectStatus);
         id.setLastModifiedDate(new Date());
 
-        log.debug("NEW> RGD:"+rgdId+", OBJECT_KEY="+id.getObjectKey()+", SPECIES_TYPE_KEY="+id.getSpeciesTypeKey()+", OBJECT_STATUS="+id.getObjectStatus());
+        log.debug(tag() + "NEW> RGD:"+rgdId+", OBJECT_KEY="+id.getObjectKey()+", SPECIES_TYPE_KEY="+id.getSpeciesTypeKey()+", OBJECT_STATUS="+id.getObjectStatus());
 
-        rgdIdDAO.updateRgdId(id);
+        if( !dryRun ) {
+            rgdIdDAO.updateRgdId(id);
+        }
     }
 
     public void updateCellLine( CellLine oldCellLine, CellLine newCellLine ) throws Exception {
 
         Logger log = LogManager.getLogger("updated_cell_lines");
 
-        log.debug("OLD> "+oldCellLine.dump("|"));
-        log.debug("NEW> "+newCellLine.dump("|"));
+        log.debug(tag() + "OLD> "+oldCellLine.dump("|"));
+        log.debug(tag() + "NEW> "+newCellLine.dump("|"));
 
-        cellLineDAO.updateCellLine(newCellLine);
+        if( !dryRun ) {
+            cellLineDAO.updateCellLine(newCellLine);
+        }
     }
 
     /**
@@ -105,10 +124,12 @@ public class Dao {
 
         Logger log = LogManager.getLogger("aliases");
         for( Alias a: aliasesForInsert ) {
-            log.debug("INSERT "+a.dump("|"));
+            log.debug(tag() + "INSERT "+a.dump("|"));
         }
 
-        aliasDAO.insertAliases(new ArrayList<>(aliasesForInsert));
+        if( !dryRun ) {
+            aliasDAO.insertAliases(new ArrayList<>(aliasesForInsert));
+        }
     }
 
     public int getGeneRgdIdByXdbId(int xdbKey, String accId) throws Exception {
@@ -142,15 +163,20 @@ public class Dao {
     }
 
     public int insertAssociation( Association assoc ) throws Exception {
-        int r = assocDAO.insertAssociation(assoc);
         Logger log = LogManager.getLogger("inserted_associations");
-        log.debug(assoc.dump("|"));
-        return r;
+        log.debug(tag() + assoc.dump("|"));
+        if( dryRun ) {
+            return 1;
+        }
+        return assocDAO.insertAssociation(assoc);
     }
 
     public int deleteAssociation( Association assoc ) throws Exception {
         Logger log = LogManager.getLogger("deleted_associations");
-        log.debug(assoc.dump("|"));
+        log.debug(tag() + assoc.dump("|"));
+        if( dryRun ) {
+            return 1;
+        }
         return assocDAO.deleteAssociationByKey(assoc.getAssocKey());
     }
 
@@ -170,7 +196,10 @@ public class Dao {
     public int insertXdbIds(Collection<XdbId> xdbs) throws Exception {
         Logger log = LogManager.getLogger("inserted_xdb_ids");
         for( XdbId id: xdbs ) {
-            log.debug(id.dump("|"));
+            log.debug(tag() + id.dump("|"));
+        }
+        if( dryRun ) {
+            return xdbs.size();
         }
         return xdao.insertXdbs(new ArrayList<>(xdbs));
     }
@@ -178,7 +207,10 @@ public class Dao {
     public int deleteXdbIds(Collection<XdbId> xdbs) throws Exception {
         Logger log = LogManager.getLogger("deleted_xdb_ids");
         for( XdbId id: xdbs ) {
-            log.debug(id.dump("|"));
+            log.debug(tag() + id.dump("|"));
+        }
+        if( dryRun ) {
+            return xdbs.size();
         }
         return xdao.deleteXdbIds(new ArrayList<>(xdbs));
     }
@@ -211,6 +243,10 @@ public class Dao {
     }
 
     public int insertTermSynonym(TermSynonym synonym) throws Exception {
+        if( dryRun ) {
+            LogManager.getLogger("warnings").debug(tag() + "insertTermSynonym " + synonym.getTermAcc() + " " + synonym.getName());
+            return 0;
+        }
         return odao.insertTermSynonym(synonym);
     }
 
@@ -222,6 +258,10 @@ public class Dao {
 
     public int insertAnnotation(Annotation a) throws Exception {
         Logger log = LogManager.getLogger("annot_inserted");
+        if( dryRun ) {
+            log.debug(tag() + a.dump("|"));
+            return 0;
+        }
         int key = adao.insertAnnotation(a);
         log.debug(a.dump("|"));
         return key;
@@ -230,11 +270,12 @@ public class Dao {
     public void updateAnnotation(Annotation newAnnot, Annotation oldAnnot) throws Exception {
 
         Logger log = LogManager.getLogger("annot_updated");
-        log.debug("OLD_ANNOT: "+oldAnnot.dump("|"));
-        log.debug("NEW_ANNOT: "+newAnnot.dump("|"));
+        log.debug(tag() + "OLD_ANNOT: "+oldAnnot.dump("|"));
+        log.debug(tag() + "NEW_ANNOT: "+newAnnot.dump("|"));
 
-        // insert the annotation
-        adao.updateAnnotation(newAnnot);
+        if( !dryRun ) {
+            adao.updateAnnotation(newAnnot);
+        }
     }
 
     public int getCountOfAnnotationsByReference(int refRgdId) throws Exception {
@@ -255,11 +296,13 @@ public class Dao {
         // dump all to be deleted annotation to 'deleted_annots' log
         List<Integer> fullAnnotKeys = new ArrayList<>(staleAnnots.size());
         for( Annotation annot: staleAnnots ) {
-            log.debug("DELETED "+annot.dump("|"));
+            log.debug(tag() + "DELETED "+annot.dump("|"));
             fullAnnotKeys.add(annot.getKey());
         }
 
-        // delete the annotations
+        if( dryRun ) {
+            return staleAnnots.size();
+        }
         return adao.deleteAnnotations(fullAnnotKeys);
     }
 }

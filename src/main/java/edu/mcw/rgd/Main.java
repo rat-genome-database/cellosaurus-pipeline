@@ -29,6 +29,7 @@ public class Main {
     private String sourcePipeline;
     private String oboFile;
     private Parser parser;
+    private boolean dryRun;
 
     Logger log = LogManager.getLogger("status");
 
@@ -38,6 +39,9 @@ public class Main {
         DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
         new XmlBeanDefinitionReader(bf).loadBeanDefinitions(new FileSystemResource("properties/AppConfigure.xml"));
         Main instance = (Main) (bf.getBean("main"));
+
+        // propagate dry-run flag to all Dao instances (static field, applies to both Main and Annotator paths)
+        Dao.setDryRun(instance.isDryRun());
 
         boolean runAnnotator = false;
         for( String arg: args ) {
@@ -63,6 +67,9 @@ public class Main {
 
             activeLog.info(instance.getVersion());
             activeLog.info("   "+instance.dao.getConnectionInfo());
+            if( Dao.isDryRun() ) {
+                activeLog.info("*** DRY RUN MODE: no DB modifications will be made; per-row detail logs are prefixed with [DRY RUN] ***");
+            }
             SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             activeLog.info("   started at "+sdt.format(new Date(time0)));
 
@@ -361,6 +368,14 @@ public class Main {
 
     public String getSourcePipeline() {
         return sourcePipeline;
+    }
+
+    public void setDryRun(boolean dryRun) {
+        this.dryRun = dryRun;
+    }
+
+    public boolean isDryRun() {
+        return dryRun;
     }
 
     public void setOboFile(String oboFile) {
