@@ -1,3 +1,8 @@
+Apr 28, 2026
+  bug fix: HGNC xref lookup no longer double-prefixes 'HGNC:'
+  ignored xdb ids: per-database breakdown moved to dedicated logs/ignored_xdb_ids.log
+  updated dependencies
+
 Apr 07, 2026
   added MemoryMonitor; consolidated boilerplate (version, timestamp, elapsed) into Main
   removed version from Annotator; updated README; updated dependencies

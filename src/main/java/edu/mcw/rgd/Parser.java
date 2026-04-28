@@ -5,12 +5,15 @@ import edu.mcw.rgd.datamodel.SpeciesType;
 import edu.mcw.rgd.datamodel.XdbId;
 import edu.mcw.rgd.process.CounterPool;
 import edu.mcw.rgd.process.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * parse the obo file
@@ -25,11 +28,14 @@ public class Parser {
     private Set<String> ignoredXrefDatabases;
     private Map<String,Integer> processedXrefDatabases;
 
+    private Logger logIgnoredXdbIds = LogManager.getLogger("ignored_xdb_ids");
+    private Map<String,Integer> ignoredXdbIdCounts;
+
     public List<DataRecord> parse(String fileName, CounterPool counters, String sourcePipeline) throws Exception {
 
         this.counters = counters;
         this.srcPipeline = sourcePipeline;
-
+        this.ignoredXdbIdCounts = new TreeMap<>();
 
         List<DataRecord> dataRecords = new ArrayList<DataRecord>();
 
@@ -116,6 +122,12 @@ public class Parser {
             dataRecords.add(rec);
             //System.out.println("#REC "+dataRecords.size());
         }
+
+        // dump per-database breakdown of ignored xdb ids to a dedicated log
+        for( Map.Entry<String,Integer> e: ignoredXdbIdCounts.entrySet() ) {
+            logIgnoredXdbIds.info("XDB_IDS_IGNORED_FOR "+e.getKey()+" : "+Utils.formatThousands(e.getValue()));
+        }
+
         return dataRecords;
     }
 
@@ -248,7 +260,8 @@ public class Parser {
         }
 
         if( getIgnoredXrefDatabases().contains(xrefDb) ) {
-            counters.increment("XDB_IDS_IGNORED_FOR "+xrefDb);
+            counters.increment("XDB_IDS_IGNORED");
+            ignoredXdbIdCounts.merge(xrefDb, 1, Integer::sum);
             return;
         }
         Integer xdbKey = getProcessedXrefDatabases().get(xrefDb);

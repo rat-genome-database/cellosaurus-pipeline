@@ -235,7 +235,10 @@ public class Main {
                         log.warn("assoc info: unexpected HGNC: "+assocInfo);
                     } else {
                         String hgncId = assocInfo.substring(startPos, endPos);
-                        detailRgdId = dao.getGeneRgdIdByXdbId(XdbId.XDB_KEY_HGNC, "HGNC:" + hgncId);
+                        if( !hgncId.startsWith("HGNC:") ) {
+                            hgncId = "HGNC:" + hgncId;
+                        }
+                        detailRgdId = dao.getGeneRgdIdByXdbId(XdbId.XDB_KEY_HGNC, hgncId);
                     }
 
                 // sample info: UniProtKB; P00552; Transposon Tn5 neo
