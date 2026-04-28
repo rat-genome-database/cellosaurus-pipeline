@@ -105,9 +105,9 @@ public class Main {
 
     Map<String, CellLine> qcCellLines(List<DataRecord> incomingRecords, List<CellLine> inRgdRecords) throws Exception {
 
-        List<CellLine> toBeDeletedCellLines = new ArrayList<>();
+        List<CellLine> toBeWithdrawnCellLines = new ArrayList<>();
 
-        // determine to-be-inserted/deleted cell lines by looking at the symbol
+        // determine to-be-inserted/withdrawn cell lines by looking at the symbol
         log.info("CELL LINES INCOMING: "+incomingRecords.size());
 
         Map<String, DataRecord> incoming = new HashMap<>();
@@ -126,12 +126,12 @@ public class Main {
         for( CellLine cl: inRgdRecords ) {
             CellLine oldCellLine = inRgd.put(cl.getSymbol(), cl);
             if( oldCellLine!=null ) {
-                toBeDeletedCellLines.add(oldCellLine);
+                toBeWithdrawnCellLines.add(oldCellLine);
             }
         }
 
         Collection<String> toBeInserted = CollectionUtils.subtract(incoming.keySet(), inRgd.keySet());
-        Collection<String> toBeDeleted = CollectionUtils.subtract(inRgd.keySet(), incoming.keySet());
+        Collection<String> toBeWithdrawn = CollectionUtils.subtract(inRgd.keySet(), incoming.keySet());
         Collection<String> matching = CollectionUtils.intersection(inRgd.keySet(), incoming.keySet());
         log.info("CELL LINES MATCHING: "+matching.size());
 
@@ -145,13 +145,13 @@ public class Main {
             log.info("CELL LINES INSERTED: " + toBeInsertedCellLines.size());
         }
 
-        if( toBeDeleted.size()!=0 || toBeDeletedCellLines.size()!=0 ) {
-            for( String symbol: toBeDeleted ) {
-                toBeDeletedCellLines.add(inRgd.get(symbol));
+        if( toBeWithdrawn.size()!=0 || toBeWithdrawnCellLines.size()!=0 ) {
+            for( String symbol: toBeWithdrawn ) {
+                toBeWithdrawnCellLines.add(inRgd.get(symbol));
             }
-            dao.deleteCellLines(toBeDeletedCellLines);
+            dao.withdrawCellLines(toBeWithdrawnCellLines);
 
-            log.info("CELL LINES DELETED: " + toBeDeletedCellLines.size());
+            log.info("CELL LINES WITHDRAWN: " + toBeWithdrawnCellLines.size());
         }
 
         // handle matching data

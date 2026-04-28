@@ -11,9 +11,12 @@ Downloads the Cellosaurus OBO file and syncs cell line records with RGD.
 1. **Parse** — reads cellosaurus.obo, extracting cell line symbols, names, species, synonyms,
    cross-references (NCI, ORDO, ATCC, etc.), and hierarchical relationships
 2. **QC cell lines** — compares incoming records against RGD; inserts new, updates changed,
-   deletes obsolete cell lines
-3. **Sync aliases** — loads/updates/deletes cell line aliases (synonyms)
-4. **Sync associations** — maintains parent-child cell line relationships
+   withdraws obsolete cell lines (cell-line rows are never physically deleted, only marked
+   `WITHDRAWN`)
+3. **Sync aliases** — loads new cell line aliases (synonyms); aliases are never deleted by policy
+4. **Sync associations** — maintains both cell-line-to-gene associations (parsed from
+   HGNC / UniProtKB / MGI / VGNC / RGD references in the OBO) and cell-line-to-cell-line
+   parent-child relationships
 5. **Sync XDB IDs** — loads/updates/deletes external database cross-references
 6. **NCI collection QC** — maintains NCI Thesaurus collection mappings
 

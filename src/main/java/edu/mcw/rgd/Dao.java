@@ -51,7 +51,7 @@ public class Dao {
         }
     }
 
-    public void deleteCellLines( Collection<CellLine> cellLines ) throws Exception {
+    public void withdrawCellLines( Collection<CellLine> cellLines ) throws Exception {
 
         Logger log = LogManager.getLogger("discontinued_cell_lines");
 

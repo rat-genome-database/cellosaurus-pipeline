@@ -1,6 +1,7 @@
 Apr 28, 2026
   bug fix: HGNC xref lookup no longer double-prefixes 'HGNC:'
   ignored xdb ids: per-database breakdown moved to dedicated logs/ignored_xdb_ids.log
+  renamed delete -> withdraw for cell lines (matches actual semantics); updated README
   updated dependencies
 
 Apr 07, 2026
