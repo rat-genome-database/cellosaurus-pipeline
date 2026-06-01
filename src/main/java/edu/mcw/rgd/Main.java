@@ -5,7 +5,7 @@ import edu.mcw.rgd.datamodel.Association;
 import edu.mcw.rgd.datamodel.CellLine;
 import edu.mcw.rgd.datamodel.XdbId;
 import edu.mcw.rgd.process.CounterPool;
-import edu.mcw.rgd.process.FileDownloader;
+import edu.mcw.rgd.process.FileDownloader2;
 import edu.mcw.rgd.process.MemoryMonitor;
 import edu.mcw.rgd.process.Utils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -208,7 +208,7 @@ public class Main {
 
     void qcAndLoadAliases( List<DataRecord> incomingRecords ) throws Exception {
 
-        AliasCollection aliases = AliasCollection.getInstance();
+        AliasCollection aliases = new AliasCollection();
 
         for( DataRecord rec: incomingRecords ) {
 
@@ -223,7 +223,7 @@ public class Main {
 
     void qcAndLoadAssociations( List<DataRecord> incomingRecords, Map<String, CellLine> inRgdMap ) throws Exception {
 
-        AssociationCollection assocs = AssociationCollection.getInstance();
+        AssociationCollection assocs = new AssociationCollection();
 
         for( DataRecord rec: incomingRecords ) {
 
@@ -332,7 +332,7 @@ public class Main {
 
     void qcAndLoadXdbIds( List<DataRecord> incomingRecords ) throws Exception {
 
-        XdbIdCollection xdbIds = XdbIdCollection.getInstance();
+        XdbIdCollection xdbIds = new XdbIdCollection();
 
         for( DataRecord rec: incomingRecords ) {
 
@@ -346,7 +346,7 @@ public class Main {
     }
 
     String downloadCellosaurusOboFile() throws Exception {
-        FileDownloader downloader = new FileDownloader();
+        FileDownloader2 downloader = new FileDownloader2();
         downloader.setExternalFile(getOboFile());
         downloader.setLocalFile("data/cellosaurus.obo");
         downloader.setUseCompression(true);

@@ -1,3 +1,6 @@
+Jun 1, 2026
+  switched to FileDownloader2; simplified the alias/xdb/association load collections; updated dependencies
+
 Apr 28, 2026
   bug fix: HGNC xref lookup no longer double-prefixes 'HGNC:'
   ignored xdb ids: per-database breakdown moved to dedicated logs/ignored_xdb_ids.log
