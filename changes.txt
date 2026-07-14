@@ -1,3 +1,6 @@
+Jul 14, 2026
+  removed dead dependencies (commons-net, httpclient); added xref databases NCI-PDMR and EDITGENE; updated dependencies
+
 Jun 1, 2026
   switched to FileDownloader2; simplified the alias/xdb/association load collections; updated dependencies
 

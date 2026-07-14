@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="main" class="edu.mcw.rgd.Main">
-        <property name="version" value="cellosaurus-pipeline   -- build Jun 1, 2026" />
+        <property name="version" value="cellosaurus-pipeline -- build Jul 14, 2026" />
         <property name="sourcePipeline" value="CELLOSAURUS" />
         <property name="dryRun" value="false"/><!-- when true, no DB rows are inserted, updated, withdrawn, or deleted; detail logs are prefixed with [DRY RUN] -->
 
@@ -75,6 +75,7 @@
                 <value>MCCL</value>
                 <value>Millipore</value>
                 <value>NCBI_Iran</value>
+                <value>NCI-DCTD</value>
                 <value>NCI-DTP</value>
                 <value>NHCDR</value>
                 <value>NIH-ARP</value>
@@ -175,6 +176,8 @@
                 <entry key="InvivoGen" value="163"/>
                 <entry key="Evercyte" value="164"/>
                 <entry key="Revvity/PerkinElmer" value="165"/>
+                <entry key="NCI-PDMR" value="169"/>
+                <entry key="EDITGENE" value="170"/>
             </map>
         </property>
     </bean>
