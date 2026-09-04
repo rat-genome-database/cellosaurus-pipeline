@@ -58,6 +58,7 @@ public class Main {
         MemoryMonitor memoryMonitor = new MemoryMonitor();
         memoryMonitor.start();
 
+        boolean ok = false;
         try {
             Annotator annotator = null;
             if( runAnnotator ) {
@@ -78,13 +79,14 @@ public class Main {
             } else {
                 instance.run();
             }
+            ok = true;
         }catch (Exception e) {
             Utils.printStackTrace(e, activeLog);
             throw e;
         } finally {
             memoryMonitor.stop();
             activeLog.info(memoryMonitor.getSummary());
-            activeLog.info("=== OK === elapsed "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
+            activeLog.info((ok ? "=== OK === " : "=== FAILED === ")+"elapsed "+Utils.formatElapsedTime(time0, System.currentTimeMillis()));
         }
     }
 

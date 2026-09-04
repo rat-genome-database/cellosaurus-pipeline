@@ -1,3 +1,7 @@
+Sep 4, 2026
+  failed runs now log FAILED instead of OK; warnings routed to log files instead of stdout;
+    annotator caches DO term names (one query per distinct term); minor cleanups; updated dependencies
+
 Jul 14, 2026
   removed dead dependencies (commons-net, httpclient); added xref databases NCI-PDMR and EDITGENE; updated dependencies
 

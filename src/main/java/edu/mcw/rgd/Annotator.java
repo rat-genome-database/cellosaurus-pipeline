@@ -3,6 +3,7 @@ package edu.mcw.rgd;
 import edu.mcw.rgd.datamodel.RgdId;
 import edu.mcw.rgd.datamodel.XdbId;
 import edu.mcw.rgd.datamodel.ontology.Annotation;
+import edu.mcw.rgd.datamodel.ontologyx.Term;
 import edu.mcw.rgd.process.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,13 +61,22 @@ public class Annotator {
         processData(results, "ORDO:", 62);
 
         List<Annotation> annots = new ArrayList<>();
+        Map<String, String> termNameCache = new HashMap<>();
 
         for( Map.Entry<Integer, Map<String, String>> entry: results.entrySet() ) {
             int rgdId = entry.getKey();
             Map<String, String> doAccMap = entry.getValue();
             for( Map.Entry<String, String> entry1: doAccMap.entrySet() ) {
                 String doTermAcc = entry1.getKey();
-                String doTermName = dao.getTermByAcc(doTermAcc).getTerm();
+                String doTermName = termNameCache.get(doTermAcc);
+                if( doTermName==null ) {
+                    Term term = dao.getTermByAcc(doTermAcc);
+                    if( term==null ) {
+                        throw new Exception("cannot resolve DO term "+doTermAcc);
+                    }
+                    doTermName = term.getTerm();
+                    termNameCache.put(doTermAcc, doTermName);
+                }
                 String notes = entry1.getValue();
 
                 Annotation a = new Annotation();

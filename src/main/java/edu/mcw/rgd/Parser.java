@@ -29,6 +29,7 @@ public class Parser {
     private Map<String,Integer> processedXrefDatabases;
 
     private Logger logIgnoredXdbIds = LogManager.getLogger("ignored_xdb_ids");
+    private Logger logWarnings = LogManager.getLogger("warnings");
     private Map<String,Integer> ignoredXdbIdCounts;
 
     public List<DataRecord> parse(String fileName, CounterPool counters, String sourcePipeline) throws Exception {
@@ -134,18 +135,16 @@ public class Parser {
     /// a subset could be either a sex type, or a cell line type
     void parseSubset( String subset, DataRecord rec ) throws Exception {
 
-        for( String sexType: getSexTypes().keySet() ) {
-            if( subset.equals(sexType) ) {
-                rec.setGender( getSexTypes().get(subset) );
-                return;
-            }
+        String gender = getSexTypes().get(subset);
+        if( gender!=null ) {
+            rec.setGender(gender);
+            return;
         }
 
-        for( String cellLineType: getCellLineTypes().keySet() ) {
-            if( subset.equals(cellLineType) ) {
-                rec.setObjectType( getCellLineTypes().get(subset) );
-                return;
-            }
+        String objectType = getCellLineTypes().get(subset);
+        if( objectType!=null ) {
+            rec.setObjectType(objectType);
+            return;
         }
 
         throw new Exception( "unexpected subset ["+subset+"]");
@@ -360,7 +359,7 @@ public class Parser {
                     String oldValue = rec.getGeneAssocs().put(pair.substring(18), "transfected_gene");
                     if( oldValue!=null ) {
                         //throw new Exception("unexpected transfected with");
-                        System.out.println("   WARNING: unexpected: "+pair);
+                        logWarnings.warn("   WARNING: unexpected: "+pair);
                     }
                 }
 

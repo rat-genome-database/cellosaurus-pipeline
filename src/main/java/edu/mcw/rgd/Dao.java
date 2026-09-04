@@ -224,7 +224,7 @@ public class Dao {
         for( TermSynonym syn: synonyms ) {
             String termAcc = results.put(syn.getName(), syn.getTermAcc());
             if( termAcc!=null && !termAcc.equals(syn.getTermAcc()) ) {
-                System.out.println("CONFLICT: "+syn.getName()+" "+termAcc+" "+syn.getTermAcc());
+                logWarnings.warn("CONFLICT: "+syn.getName()+" "+termAcc+" "+syn.getTermAcc());
             }
         }
         return results;

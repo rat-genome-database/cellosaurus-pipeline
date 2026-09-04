@@ -147,7 +147,7 @@ public class NciCollection {
         String processedName = synonym.toLowerCase();
 
         String[] words = processedName.replace('-',' ').replace(',',' ').replace('(',' ').replace(')',' ').replace('/',' ')
-                .toLowerCase().split("[\\s]");
+                .split("[\\s]");
         Arrays.sort(words);
         return Utils.concatenate(words, ".");
     }
